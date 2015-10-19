@@ -21,7 +21,7 @@ install:
   - composer update --dev --no-interaction --prefer-stable $PREFER_LOWEST
 
 script:
-  - ./vendor/bin/phpunit -c tests --coverage-clover=build/logs/clover.xml
+  - ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
 
 matrix:
   fast_finish: true

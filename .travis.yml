@@ -18,7 +18,8 @@ php:
   - hhvm
   
 before_install:
-  - composer config --global github-oauth.github.com $github_oauth_token
+  - composer self-up
+  - composer config --global github-oauth.github.com $GITHUB_OAUTH_TOKEN
 
 install:
   - composer update --dev --no-interaction --prefer-stable $PREFER_LOWEST

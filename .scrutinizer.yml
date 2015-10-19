@@ -23,4 +23,4 @@ tools:
     php_changetracking: true
     external_code_coverage:
         runs: 1
-        timeout: 300
+        timeout: 600

@@ -1,6 +1,6 @@
 {
     "name": "fabiang/doctrine-dynamic",
-    "description": "Load mappings for your entities by configuration files",
+    "description": "Load Doctrine mappings dynamically for your entities by configuration",
     "type": "library",
     "license": "BSD-2-Clause",
     "authors": [

@@ -16,6 +16,9 @@ php:
   - 5.6
   - 7
   - hhvm
+  
+before_install:
+  - composer config --global github-oauth.github.com $github_oauth_token
 
 install:
   - composer update --dev --no-interaction --prefer-stable $PREFER_LOWEST

@@ -1,0 +1,22 @@
+language: php
+
+sudo: false
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
+php:
+  - 5.6
+  - 7
+  - hhvm
+
+install:
+  - composer install --dev --no-interaction
+
+script:
+  - ./vendor/bin/phpunit -c tests --coverage-clover=build/logs/clover.xml
+
+matrix:
+  fast_finish: true

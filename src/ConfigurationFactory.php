@@ -98,8 +98,8 @@ class ConfigurationFactory
         $oneToOne->setInversedBy($this->getMappingOption($mappingConfig, 'inversedBy'));
         $oneToOne->setMappedBy($this->getMappingOption($mappingConfig, 'mappedBy'));
 
-        if (isset($mappingConfig['joinColumn'])) {
-            $oneToOne->setJoinColumn($this->configureJoinColumn($mappingConfig['joinColumn']));
+        if (isset($mappingConfig['joinColumns'])) {
+            $oneToOne->setJoinColumn($this->configureJoinColumn($mappingConfig['joinColumns']));
         }
 
         return $oneToOne;

@@ -135,7 +135,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                 'isOwningSide' => true,
                 'joinColumns'  => [
                     [
-                        'name'                 => 'oneToOne_id',
+                        'name'                 => 'oneToOne',
                         'referencedColumnName' => 'id',
                     ]
                 ]

@@ -64,6 +64,54 @@ class MetadataMapper
 
                 $metadata->mapOneToOne($oneToOneConfig);
             }
+
+            foreach ($field->getManyToOne() as $manyToOne) {
+                $manyToOneConfig = [
+                    'fieldName'    => $field->getName(),
+                    'targetEntity' => $manyToOne->getTargetEntity(),
+                    'inversedBy'   => $manyToOne->getInversedBy(),
+                ];
+
+                $joinColumn = $manyToOne->getJoinColumn();
+                if (null !== $joinColumn) {
+                    $manyToOneConfig['joinColumns'] = [
+                        [
+                            'name'                 => $joinColumn->getName(),
+                            'referencedColumnName' => $joinColumn->getReferencedColumnName(),
+                        ]
+                    ];
+                }
+
+                $metadata->mapManyToOne($manyToOneConfig);
+            }
+
+            foreach ($field->getOneToMany() as $oneToMany) {
+                $oneToMany = [
+                    'fieldName'    => $field->getName(),
+                    'targetEntity' => $oneToMany->getTargetEntity(),
+                    'mappedBy'     => $oneToMany->getMappedBy(),
+                ];
+
+                $metadata->mapOneToMany($oneToMany);
+            }
+
+            foreach ($field->getManyToMany() as $manyToMany) {
+                $manyToManyConfig = [
+                    'fieldName'    => $field->getName(),
+                    'targetEntity' => $manyToMany->getTargetEntity(),
+                    'inversedBy'   => $manyToMany->getInversedBy(),
+                    'mappedBy'     => $manyToMany->getMappedBy(),
+                ];
+
+                $joinTable = $manyToMany->getJoinTable();
+                if (null !== $joinTable) {
+                    $manyToManyConfig['joinTable'] = [
+                        'name' => $joinTable->getName(),
+                    ];
+                }
+
+                $metadata->mapManyToMany($manyToManyConfig);
+            }
         }
     }
 }

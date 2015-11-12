@@ -59,6 +59,16 @@ class TestEntity
      */
     private $manyToOne;
 
+    /**
+     * @var ArrayCollection
+     */
+    private $manyToMany;
+
+    public function __construct()
+    {
+        $this->manyToMany = new ArrayCollection;
+    }
+
     public function getId()
     {
         return $this->id;

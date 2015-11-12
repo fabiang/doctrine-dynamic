@@ -50,7 +50,7 @@ class Field
     /**
      * @var Mapping\ManyToOne[]
      */
-    private $manyToONe  = [];
+    private $manyToOne  = [];
 
     /**
      * @var Mapping\OneToMany[]
@@ -103,9 +103,9 @@ class Field
     /**
      * @return Mapping\ManyToOne[]
      */
-    public function getManyToONe()
+    public function getManyToOne()
     {
-        return $this->manyToONe;
+        return $this->manyToOne;
     }
 
     /**

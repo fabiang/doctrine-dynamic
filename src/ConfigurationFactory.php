@@ -45,7 +45,10 @@ class ConfigurationFactory
      * @var array
      */
     private $mappings = [
-        'oneToOne' => Configuration\Mapping\OneToOne::class,
+        'oneToOne'   => Configuration\Mapping\OneToOne::class,
+        'manyToOne'  => Configuration\Mapping\ManyToOne::class,
+        'oneToMany'  => Configuration\Mapping\OneToMany::class,
+        'manyToMany' => Configuration\Mapping\ManyToMany::class,
     ];
 
     /**
@@ -126,6 +129,41 @@ class ConfigurationFactory
         return $oneToOne;
     }
 
+    private function configureManyToOne(array $mappingConfig)
+    {
+        $manyToOne = new Configuration\Mapping\ManyToOne;
+        $manyToOne->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
+        $manyToOne->setInversedBy($this->getOption($mappingConfig, 'inversedBy'));
+
+        if (isset($mappingConfig['joinColumns'])) {
+            $manyToOne->setJoinColumn($this->configureJoinColumn($mappingConfig['joinColumns']));
+        }
+
+        return $manyToOne;
+    }
+
+    private function configureOneToMany(array $mappingConfig)
+    {
+        $oneToMany = new Configuration\Mapping\OneToMany;
+        $oneToMany->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
+        $oneToMany->setMappedBy($this->getOption($mappingConfig, 'mappedBy'));
+        return $oneToMany;
+    }
+
+    private function configureManyToMany(array $mappingConfig)
+    {
+        $manyToMany = new Configuration\Mapping\ManyToMany;
+        $manyToMany->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
+        $manyToMany->setInversedBy($this->getOption($mappingConfig, 'inversedBy'));
+        $manyToMany->setMappedBy($this->getOption($mappingConfig, 'mappedBy'));
+
+        if (isset($mappingConfig['joinTable'])) {
+            $manyToMany->setJoinTable($this->configureJoinTable($mappingConfig['joinTable']));
+        }
+
+        return $manyToMany;
+    }
+
     /**
      * @param array $joinColumnConfig
      * @return \Fabiang\DoctrineDynamic\Configuration\Mapping\JoinColumn
@@ -137,6 +175,14 @@ class ConfigurationFactory
 
         $joinColumn = new Configuration\Mapping\JoinColumn($name, $referencedColumnName);
         return $joinColumn;
+    }
+
+    private function configureJoinTable(array $joinTableConfig)
+    {
+        $name = $this->getOption($joinTableConfig, 'name', true);
+
+        $joinTable = new Configuration\Mapping\JoinTable($name);
+        return $joinTable;
     }
 
     /**

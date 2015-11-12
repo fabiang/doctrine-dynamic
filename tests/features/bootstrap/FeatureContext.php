@@ -119,6 +119,75 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given many to one mapping configuration
+     */
+    public function manyToOneMappingConfiguration()
+    {
+        $this->configuration[TestEntityTwo::class] = [
+            'manyToOne' => [
+                'manyToOne' => [
+                    [
+                        'targetEntity' => TestEntityOne::class,
+                        'inversedBy'   => 'oneToMany',
+                        'joinColumns'  => [
+                            'name'                 => 'manyToOne',
+                            'referencedColumnName' => 'id'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @Given one to many mapping configuration
+     */
+    public function oneToManyMappingConfiguration()
+    {
+        $this->configuration[TestEntityOne::class] = [
+            'oneToMany' => [
+                'oneToMany' => [
+                    [
+                        'targetEntity' => TestEntityTwo::class,
+                        'mappedBy'     => 'manyToOne',
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @Given many to many mapping configuration
+     */
+    public function manyToManyMappingConfiguration()
+    {
+        $this->configuration[TestEntityOne::class] = [
+            'manyToMany' => [
+                'manyToMany' => [
+                    [
+                        'targetEntity' => TestEntityTwo::class,
+                        'inversedBy'   => 'manyToMany',
+                        'joinTable'    => [
+                            'name' => 'ManyToManyTableName',
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->configuration[TestEntityTwo::class] = [
+            'manyToMany' => [
+                'manyToMany' => [
+                    [
+                        'targetEntity' => TestEntityOne::class,
+                        'mappedBy'     => 'manyToMany',
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
      * @Then Entity :entity should have one-to-one mapping as owning side
      */
     public function entityShouldHaveOneToOneMappingAsOwningSide($entity)
@@ -163,6 +232,96 @@ final class FeatureContext implements Context, SnippetAcceptingContext
             $mappingField
         );
     }
+
+    /**
+     * @Then entity :entity should have many-to-one mapping as owning side
+     */
+    public function entityShouldHaveManyToOneMappingAsOwningSide($entity)
+    {
+        $mappings = $this->getMappingData($entity);
+        Assert::assertArrayHasKey('manyToOne', $mappings);
+        $mappingField = $mappings['manyToOne'];
+        Assert::assertArraySubset(
+            [
+                'fieldName'    => 'manyToOne',
+                'targetEntity' => TestEntityOne::class,
+                'inversedBy'   => 'oneToMany',
+                'mappedBy'     => null,
+                'isOwningSide' => true,
+                'joinColumns'  => [
+                    [
+                        'name'                 => 'manyToOne',
+                        'referencedColumnName' => 'id',
+                    ]
+                ]
+            ],
+            $mappingField
+        );
+    }
+
+    /**
+     * @Then entity :entity should have one-to-many mapping as inverse side
+     */
+    public function entityShouldHaveOneToManyMappingAsInverseSide($entity)
+    {
+        $mappings = $this->getMappingData($entity);
+        Assert::assertArrayHasKey('oneToMany', $mappings);
+        $mappingField = $mappings['oneToMany'];
+        Assert::assertArraySubset(
+            [
+                'fieldName'    => 'oneToMany',
+                'targetEntity' => TestEntityTwo::class,
+                'inversedBy'   => null,
+                'mappedBy'     => 'manyToOne',
+                'isOwningSide' => false,
+            ],
+            $mappingField
+        );
+    }
+
+    /**
+     * @Then entity :entity should have many-to-many mapping as owning side
+     */
+    public function entityShouldHaveManyToManyMappingAsOwningSide($entity)
+    {
+        $mappings = $this->getMappingData($entity);
+        Assert::assertArrayHasKey('manyToMany', $mappings);
+        $mappingField = $mappings['manyToMany'];
+        Assert::assertArraySubset(
+            [
+                'fieldName'    => 'manyToMany',
+                'targetEntity' => TestEntityTwo::class,
+                'inversedBy'   => 'manyToMany',
+                'mappedBy'     => null,
+                'isOwningSide' => true,
+                'joinTable'  => [
+                    'name' => 'ManyToManyTableName',
+                ]
+            ],
+            $mappingField
+        );
+    }
+
+    /**
+     * @Then entity :entity should have many-to-many mapping as inverse side
+     */
+    public function entityShouldHaveManyToManyMappingAsInverseSide($entity)
+    {
+        $mappings = $this->getMappingData($entity);
+        Assert::assertArrayHasKey('manyToMany', $mappings);
+        $mappingField = $mappings['manyToMany'];
+        Assert::assertArraySubset(
+            [
+                'fieldName'    => 'manyToMany',
+                'targetEntity' => TestEntityOne::class,
+                'inversedBy'   => null,
+                'mappedBy'     => 'manyToMany',
+                'isOwningSide' => false,
+            ],
+            $mappingField
+        );
+    }
+
 
     private function getMappingData($entity)
     {

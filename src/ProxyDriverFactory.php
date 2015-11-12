@@ -40,6 +40,7 @@ use Traversable;
 use Fabiang\DoctrineDynamic\Exception\InvalidArgumentException;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Fabiang\DoctrineDynamic\Exception\RuntimeException;
+use Fabiang\DoctrineDynamic\Mapper\MetadataMapper;
 
 class ProxyDriverFactory
 {
@@ -87,9 +88,11 @@ class ProxyDriverFactory
             ));
         }
 
+        $metadataMapper = new MetadataMapper();
+
         $drivers = $driverImplementation->getDrivers();
         foreach ($drivers as $namespace => $originalDriver) {
-            $proxyDriver = new ProxyDriver($originalDriver, $configuration);
+            $proxyDriver = new ProxyDriver($originalDriver, $configuration, $metadataMapper);
             $driverImplementation->addDriver($proxyDriver, $namespace);
         }
     }

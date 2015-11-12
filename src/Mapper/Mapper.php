@@ -33,55 +33,12 @@
  * @license   BSD-2-Clause
  */
 
-namespace Fabiang\DoctrineDynamic;
+namespace Fabiang\DoctrineDynamic\Mapper;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Fabiang\DoctrineDynamic\Mapper\Mapper;
+use Fabiang\DoctrineDynamic\Configuration\Entity as EntityConfiguration;
 
-class ProxyDriver implements MappingDriver
+interface Mapper
 {
-    /**
-     * @var MappingDriver
-     */
-    private $originalDriver;
-
-    /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
-     * @var MetadataMapper
-     */
-    private $mapper;
-
-    public function __construct(MappingDriver $originalDriver, Configuration $configuration, Mapper $mapper)
-    {
-        $this->originalDriver = $originalDriver;
-        $this->configuration  = $configuration;
-        $this->mapper         = $mapper;
-    }
-
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
-    {
-        $return = $this->originalDriver->loadMetadataForClass($className, $metadata);
-
-        if ($this->configuration->has($className)) {
-            $configuration = $this->configuration->get($className);
-            $this->mapper->map($metadata, $configuration);
-        }
-
-        return $return;
-    }
-
-    public function getAllClassNames()
-    {
-        return $this->originalDriver->getAllClassNames();
-    }
-
-    public function isTransient($className)
-    {
-        return $this->originalDriver->isTransient($className);
-    }
+    public function map(ClassMetadata $metadata, EntityConfiguration $configuration);
 }

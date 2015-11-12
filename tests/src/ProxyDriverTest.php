@@ -35,14 +35,23 @@
 
 namespace Fabiang\DoctrineDynamic;
 
+use PHPUnit_Framework_TestCase as TestCase;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Fabiang\DoctrineDynamic\Mapper\Mapper;
+use Fabiang\DoctrineDynamic\Configuration\Entity;
 
-class ProxyDriver implements MappingDriver
+/**
+ * @coversDefaultClass Fabiang\DoctrineDynamic\ProxyDriver
+ */
+final class ProxyDriverTest extends TestCase
 {
     /**
-     * @var MappingDriver
+     * @var ProxyDriver
+     */
+    private $driver;
+
+    /**
+     * @var \Prophecy\Prophecy\ObjectProphecy
      */
     private $originalDriver;
 
@@ -52,36 +61,63 @@ class ProxyDriver implements MappingDriver
     private $configuration;
 
     /**
-     * @var MetadataMapper
+     * @var \Prophecy\Prophecy\ObjectProphecy
      */
     private $mapper;
 
-    public function __construct(MappingDriver $originalDriver, Configuration $configuration, Mapper $mapper)
+    protected function setUp()
     {
-        $this->originalDriver = $originalDriver;
-        $this->configuration  = $configuration;
-        $this->mapper         = $mapper;
+        $this->originalDriver = $this->prophesize(MappingDriver::class);
+        $this->configuration  = new Configuration;
+        $this->mapper         = $this->prophesize(Mapper\Mapper::class);
+        $this->driver         = new ProxyDriver(
+            $this->originalDriver->reveal(),
+            $this->configuration,
+            $this->mapper->reveal()
+        );
     }
 
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    /**
+     * @test
+     * @covers ::__construct
+     * @covers ::loadMetadataForClass
+     * @uses Fabiang\DoctrineDynamic\Configuration
+     * @uses Fabiang\DoctrineDynamic\Configuration\Entity
+     */
+    public function loadingMetaData()
     {
-        $return = $this->originalDriver->loadMetadataForClass($className, $metadata);
+        $classMetaData = $this->prophesize(ClassMetadata::class)->reveal();
+        $this->originalDriver->loadMetadataForClass('baz', $classMetaData)
+            ->shouldBeCalled()
+            ->willReturn('something');
 
-        if ($this->configuration->has($className)) {
-            $configuration = $this->configuration->get($className);
-            $this->mapper->map($metadata, $configuration);
-        }
+        $entity = new Entity('baz');
+        $this->configuration->add($entity);
 
-        return $return;
+        $this->mapper->map($classMetaData, $entity)
+            ->shouldBeCalled();
+
+        $this->assertSame('something', $this->driver->loadMetadataForClass('baz', $classMetaData));
     }
 
-    public function getAllClassNames()
+    /**
+     * @test
+     * @covers ::getAllClassNames
+     * @covers ::isTransient
+     * @uses Fabiang\DoctrineDynamic\ProxyDriver::__construct
+     */
+    public function proxying()
     {
-        return $this->originalDriver->getAllClassNames();
-    }
+        $this->originalDriver->getAllClassNames()
+            ->shouldBeCalled()
+            ->willReturn(true);
 
-    public function isTransient($className)
-    {
-        return $this->originalDriver->isTransient($className);
+        $this->assertTrue($this->driver->getAllClassNames());
+
+        $this->originalDriver->isTransient('foobar')
+            ->shouldBeCalled()
+            ->willReturn(true);
+
+        $this->assertTrue($this->driver->isTransient('foobar'));
     }
 }

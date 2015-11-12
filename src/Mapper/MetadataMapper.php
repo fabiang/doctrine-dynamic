@@ -38,7 +38,7 @@ namespace Fabiang\DoctrineDynamic\Mapper;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Configuration\Entity as EntityConfiguration;
 
-class MetadataMapper
+class MetadataMapper implements Mapper
 {
 
     public function map(ClassMetadata $metadata, EntityConfiguration $configuration)

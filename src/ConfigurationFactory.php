@@ -41,10 +41,17 @@ use Fabiang\DoctrineDynamic\Exception\RuntimeException;
 
 class ConfigurationFactory
 {
+    /**
+     * @var array
+     */
     private $mappings = [
         'oneToOne' => Configuration\Mapping\OneToOne::class,
     ];
 
+    /**
+     * @param array|\Traversable $configuration
+     * @return \Fabiang\DoctrineDynamic\Configuration
+     */
     public function factory($configuration)
     {
         $configurationArray = ArrayUtils::iteratorToArray($configuration, true);
@@ -58,6 +65,10 @@ class ConfigurationFactory
         return $configurationObject;
     }
 
+    /**
+     * @param \Fabiang\DoctrineDynamic\Configuration\Entity $entity
+     * @param array $entityConfig
+     */
     private function configureFields(Configuration\Entity $entity, array $entityConfig)
     {
         foreach ($entityConfig as $fieldName => $fieldConfig) {
@@ -67,6 +78,12 @@ class ConfigurationFactory
         }
     }
 
+    /**
+     * @param \Fabiang\DoctrineDynamic\Configuration\Field $field
+     * @param array $fieldConfig
+     * @param string $entityName
+     * @throws UnexpectedValueException
+     */
     private function configureMappings(Configuration\Field $field, array $fieldConfig, $entityName)
     {
         foreach ($this->mappings as $mappingType => $mappingClassName) {
@@ -91,12 +108,16 @@ class ConfigurationFactory
         }
     }
 
+    /**
+     * @param array $mappingConfig
+     * @return \Fabiang\DoctrineDynamic\Configuration\Mapping\OneToOne
+     */
     private function configureOneToOne(array $mappingConfig)
     {
         $oneToOne = new Configuration\Mapping\OneToOne;
-        $oneToOne->setTargetEntity($this->getMappingOption($mappingConfig, 'targetEntity', true));
-        $oneToOne->setInversedBy($this->getMappingOption($mappingConfig, 'inversedBy'));
-        $oneToOne->setMappedBy($this->getMappingOption($mappingConfig, 'mappedBy'));
+        $oneToOne->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
+        $oneToOne->setInversedBy($this->getOption($mappingConfig, 'inversedBy'));
+        $oneToOne->setMappedBy($this->getOption($mappingConfig, 'mappedBy'));
 
         if (isset($mappingConfig['joinColumns'])) {
             $oneToOne->setJoinColumn($this->configureJoinColumn($mappingConfig['joinColumns']));
@@ -105,18 +126,29 @@ class ConfigurationFactory
         return $oneToOne;
     }
 
+    /**
+     * @param array $joinColumnConfig
+     * @return \Fabiang\DoctrineDynamic\Configuration\Mapping\JoinColumn
+     */
     private function configureJoinColumn(array $joinColumnConfig)
     {
-        $name                 = $this->getMappingOption($joinColumnConfig, 'name', true);
-        $referencedColumnName = $this->getMappingOption($joinColumnConfig, 'referencedColumnName', true);
+        $name                 = $this->getOption($joinColumnConfig, 'name', true);
+        $referencedColumnName = $this->getOption($joinColumnConfig, 'referencedColumnName', true);
 
         $joinColumn = new Configuration\Mapping\JoinColumn($name, $referencedColumnName);
         return $joinColumn;
     }
 
-    private function getMappingOption(array $mappingConfig, $option, $required = false)
+    /**
+     * @param array $config
+     * @param string $option
+     * @param boolean $required
+     * @return array
+     * @throws RuntimeException
+     */
+    private function getOption(array $config, $option, $required = false)
     {
-        if (!isset($mappingConfig[$option])) {
+        if (!isset($config[$option])) {
             if ($required) {
                 throw new RuntimeException(sprintf(
                     'Configuration for field "%s" is required',
@@ -127,6 +159,6 @@ class ConfigurationFactory
             return null;
         }
 
-        return $mappingConfig[$option];
+        return $config[$option];
     }
 }

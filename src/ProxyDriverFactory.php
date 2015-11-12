@@ -54,6 +54,12 @@ class ProxyDriverFactory
         $this->configurationFactory = new ConfigurationFactory;
     }
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param array|Traversable|Configuration $configuration
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
     public function factory(EntityManagerInterface $entityManager, $configuration)
     {
         if (is_array($configuration) || $configuration instanceof Traversable) {

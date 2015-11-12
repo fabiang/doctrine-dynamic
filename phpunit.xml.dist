@@ -1,14 +1,14 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.0/phpunit.xsd"
+    colors="true"
     forceCoversAnnotation="true"
     beStrictAboutChangesToGlobalState="true"
     beStrictAboutOutputDuringTests="true"
     beStrictAboutResourceUsageDuringSmallTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
     beStrictAboutTodoAnnotatedTests="true"
-    checkForUnintentionallyCoveredCode="true"
-    bootstrap="./vendor/autoload.php">
+    checkForUnintentionallyCoveredCode="true">
 
     <testsuites>
         <testsuite name="Fabiang_DoctrineDynamic">
@@ -28,7 +28,5 @@
         <ini name="memory_limit" value="-1"/>
     </php>
 
-    <logging>
-
-    </logging>
+    <logging></logging>
 </phpunit>

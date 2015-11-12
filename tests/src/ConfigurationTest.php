@@ -35,50 +35,40 @@
 
 namespace Fabiang\DoctrineDynamic;
 
+use PHPUnit_Framework_TestCase as TestCase;
 use Fabiang\DoctrineDynamic\Configuration\Entity;
 
-class Configuration
+/**
+ * @coversDefaultClass Fabiang\DoctrineDynamic\Configuration
+ */
+final class ConfigurationTest extends TestCase
 {
     /**
-     * @var Entity[]
+     * @var Configuration
      */
-    private $entities = [];
+    private $config;
 
-    /**
-     * @param string $name
-     * @return boolean
-     */
-    public function has($name)
+    protected function setUp()
     {
-        return isset($this->entities[$name]);
+        $this->config = new Configuration;
     }
 
     /**
-     * @param string $name
-     * @return Entity
+     * @covers ::add
+     * @covers ::getEntities
+     * @covers ::has
+     * @covers ::get
+     * @uses Fabiang\DoctrineDynamic\Configuration\Entity
      */
-    public function get($name)
+    public function testConfigObject()
     {
-        if ($this->has($name)) {
-            return $this->entities[$name];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Entity $entity
-     */
-    public function add(Entity $entity)
-    {
-        $this->entities[$entity->getName()] = $entity;
-    }
-
-    /**
-     * @return Entity[]
-     */
-    public function getEntities()
-    {
-        return $this->entities;
+        $this->assertCount(0, $this->config->getEntities());
+        $entity = new Entity('foo');
+        $this->config->add($entity);
+        $this->assertSame(['foo' => $entity], $this->config->getEntities());
+        $this->assertTrue($this->config->has('foo'));
+        $this->assertFalse($this->config->has('bar'));
+        $this->assertSame($entity, $this->config->get('foo'));
+        $this->assertNull($this->config->get('bar'));
     }
 }

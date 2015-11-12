@@ -35,35 +35,53 @@
 
 namespace Fabiang\DoctrineDynamic;
 
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadata as ORMClassMetadata;
+use Fabiang\DoctrineDynamic\Mapper\MetadataMapper;
 
-/**
- *
- */
-class ConfigurationMapper
+class ProxyDriver implements MappingDriver
 {
+    /**
+     * @var MappingDriver
+     */
+    private $originalDriver;
 
-    public function map(Options $options, ClassMetadata $metadata)
+    /**
+     * @var Configuration
+     */
+    private $configuration;
+
+    /**
+     * @var MetadataMapper
+     */
+    private $mapper;
+
+    public function __construct(MappingDriver $originalDriver, Configuration $configuration)
     {
-        if (!($metadata instanceof ORMClassMetadata)) {
-            return;
+        $this->originalDriver = $originalDriver;
+        $this->configuration  = $configuration;
+        $this->mapper         = new MetadataMapper;
+    }
+
+    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    {
+        $return = $this->originalDriver->loadMetadataForClass($className, $metadata);
+
+        if ($this->configuration->has($className)) {
+            $configuration = $this->configuration->get($className);
+            $this->mapper->map($metadata, $configuration);
         }
 
-        foreach ($options->getManyToMany() as $mapping) {
-            $metadata->mapManyToMany($mapping->toArray());
-        }
+        return $return;
+    }
 
-        foreach ($options->getManyToOne() as $mapping) {
-            $metadata->mapManyToOne($mapping->toArray());
-        }
+    public function getAllClassNames()
+    {
+        return $this->originalDriver->getAllClassNames();
+    }
 
-        foreach ($options->getOneToMany() as $mapping) {
-            $metadata->mapOneToMany($mapping->toArray());
-        }
-
-        foreach ($options->getOneToOne() as $mapping) {
-            $metadata->mapOneToOne($mapping->toArray());
-        }
+    public function isTransient($className)
+    {
+        return $this->originalDriver->isTransient($className);
     }
 }

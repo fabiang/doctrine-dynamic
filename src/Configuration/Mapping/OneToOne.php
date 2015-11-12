@@ -33,15 +33,67 @@
  * @license   BSD-2-Clause
  */
 
-namespace Fabiang\DoctrineDynamic\Option;
+namespace Fabiang\DoctrineDynamic\Configuration\Mapping;
 
-/**
- *
- */
-class ManyToMany implements MappingOption
+class OneToOne implements MappingConfig
 {
-    public function toArray()
-    {
+    /**
+     * @var string
+     */
+    private $targetEntity;
 
+    /**
+     * @var string
+     */
+    private $mappedBy;
+
+    /**
+     * @var string
+     */
+    private $inversedBy;
+
+    /**
+     * @var JoinColumn
+     */
+    private $joinColumn;
+
+    public function getTargetEntity()
+    {
+        return $this->targetEntity;
+    }
+
+    public function getMappedBy()
+    {
+        return $this->mappedBy;
+    }
+
+    public function getInversedBy()
+    {
+        return $this->inversedBy;
+    }
+
+    public function getJoinColumn()
+    {
+        return $this->joinColumn;
+    }
+
+    public function setTargetEntity($targetEntity)
+    {
+        $this->targetEntity = $targetEntity;
+    }
+
+    public function setMappedBy($mappedBy)
+    {
+        $this->mappedBy = $mappedBy;
+    }
+
+    public function setInversedBy($inversedBy)
+    {
+        $this->inversedBy = $inversedBy;
+    }
+
+    public function setJoinColumn(JoinColumn $joinColumn)
+    {
+        $this->joinColumn = $joinColumn;
     }
 }

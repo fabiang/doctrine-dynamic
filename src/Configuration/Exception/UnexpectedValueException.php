@@ -1,6 +1,6 @@
 <?php
 
-namespace Fabiang\DoctrineDynamic\Options\Exception;
+namespace Fabiang\DoctrineDynamic\Configuration\Exception;
 
 use Fabiang\DoctrineDynamic\Exception\UnexpectedValueException as BaseUnexpectedValueException;
 

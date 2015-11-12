@@ -1,0 +1,9 @@
+default:
+  suites:
+    doctrinedynamic:
+      paths: [ %paths.base%/tests/features/ ]
+      contexts: 
+        - Fabiang\DoctrineDynamic\Behat\FeatureContext:
+          - { "Fabiang\\DoctrineDynamic\\Behat\\NamespaceOne\\Entity": %paths.base%/tests/entities/NamespaceOne/, "Fabiang\\DoctrineDynamic\\Behat\\NamespaceTwo\\Entity": %paths.base%/tests/entities/NamespaceTwo/ }
+  testers:
+    strict: true

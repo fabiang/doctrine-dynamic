@@ -35,80 +35,36 @@
 
 namespace Fabiang\DoctrineDynamic;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Fabiang\DoctrineDynamic\Configuration\Entity;
 
-/**
- *
- */
-final class DynamicMetadataProxyDriver implements MappingDriver
+class Configuration
 {
-
     /**
-     * @var MappingDriver
+     * @var Entity[]
      */
-    private $previousDriver;
+    private $entities = [];
 
-    /**
-     * FQCN of the entity.
-     *
-     * @var string
-     */
-    private $entity;
-
-    /**
-     * @var ConfigurationMapper
-     */
-    private $configurationMapper;
-
-    /**
-     * @var Options
-     */
-    private $options;
-
-    /**
-     * @param MappingDriver $previousDriver
-     * @param string $entity
-     * @param ConfigurationMapper $configurationMapper
-     * @param Options $options
-     */
-    public function __construct(
-        MappingDriver $previousDriver,
-        $entity,
-        ConfigurationMapper $configurationMapper,
-        Options $options
-    ) {
-        $this->previousDriver      = $previousDriver;
-        $this->entity              = $entity;
-        $this->configurationMapper = $configurationMapper;
-        $this->options             = $options;
+    public function has($name)
+    {
+        return isset($this->entities[$name]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    public function get($name)
     {
-        $this->previousDriver->loadMetadataForClass($className, $metadata);
-
-        if ($className === $this->entity) {
-            $this->configurationMapper->map($this->options, $metadata);
+        if ($this->has($name)) {
+            return $this->entities[$name];
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getAllClassNames()
+    public function add(Entity $entity)
     {
-        return $this->previousDriver->getAllClassNames();
+        $this->entities[$entity->getName()] = $entity;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isTransient($className)
+    public function getEntities()
     {
-        return $this->previousDriver->isTransient($className);
+        return $this->entities;
     }
 }

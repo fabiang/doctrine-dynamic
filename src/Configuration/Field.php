@@ -33,16 +33,94 @@
  * @license   BSD-2-Clause
  */
 
-namespace Fabiang\DoctrineDynamic\Option;
+namespace Fabiang\DoctrineDynamic\Configuration;
 
-/**
- * Interface for mapping options.
- */
-interface MappingOption
+class Field
 {
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
-     * @return array
+     * @var Mapping\ManyToMany[]
      */
-    public function toArray();
+    private $manyToMany = [];
+
+    /**
+     * @var Mapping\ManyToOne[]
+     */
+    private $manyToONe  = [];
+
+    /**
+     * @var Mapping\OneToMany[]
+     */
+    private $oneToMany  = [];
+
+    /**
+     * @var Mapping\OneToOne[]
+     */
+    private $oneToOne   = [];
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function addManyToMany(Mapping\ManyToMany $manyToMany)
+    {
+        $this->manyToMany[] = $manyToMany;
+    }
+
+    public function addManyToOne(Mapping\ManyToOne $manyToOne)
+    {
+        $this->manyToOne[] = $manyToOne;
+    }
+
+    public function addOneToMany(Mapping\OneToMany $oneToMany)
+    {
+        $this->oneToMany[] = $oneToMany;
+    }
+
+    public function addOneToOne(Mapping\OneToOne $oneToOne)
+    {
+        $this->oneToOne[] = $oneToOne;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return Mapping\ManyToMany[]
+     */
+    public function getManyToMany()
+    {
+        return $this->manyToMany;
+    }
+
+    /**
+     * @return Mapping\ManyToOne[]
+     */
+    public function getManyToONe()
+    {
+        return $this->manyToONe;
+    }
+
+    /**
+     * @return Mapping\OneToMany[]
+     */
+    public function getOneToMany()
+    {
+        return $this->oneToMany;
+    }
+
+    /**
+     * @return Mapping\OneToOne[]
+     */
+    public function getOneToOne()
+    {
+        return $this->oneToOne;
+    }
 }

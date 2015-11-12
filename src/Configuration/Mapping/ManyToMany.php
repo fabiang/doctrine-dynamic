@@ -33,83 +33,67 @@
  * @license   BSD-2-Clause
  */
 
-namespace Fabiang\DoctrineDynamic;
+namespace Fabiang\DoctrineDynamic\Configuration\Mapping;
 
-/**
- *
- */
-class Options
+class ManyToMany implements MappingConfig
 {
+    /**
+     * @var string
+     */
+    private $targetEntity;
 
     /**
-     * @var Options\ManyToMany[]
+     * @var string
      */
-    private $manyToMany = [];
+    private $inversedBy;
 
     /**
-     * @var Options\ManyToOne[]
+     * @var string
      */
-    private $manyToOne = [];
+    private $mappedBy;
 
     /**
-     * @var Options\OneToMany[]
+     * @var JoinTable
      */
-    private $oneToMany = [];
+    private $joinTable;
 
-    /**
-     * @var Options\OneToOne[]
-     */
-    private $oneToOne = [];
-
-    public function addManyToMany(Options\ManyToMany $manyToMany)
+    public function getTargetEntity()
     {
-        $this->manyToMany[] = $manyToMany;
+        return $this->targetEntity;
     }
 
-    public function addManyToOne(Options\ManyToOne $manyToOne)
+    public function getInversedBy()
     {
-        $this->manyToOne[] = $manyToOne;
+        return $this->inversedBy;
     }
 
-    public function addOneToMany(Options\OneToMany $oneToMany)
+    public function getMappedBy()
     {
-        $this->oneToMany[] = $oneToMany;
+        return $this->mappedBy;
     }
 
-    public function addOneToOne(Options\OneToOne $oneToOne)
+    public function getJoinTable()
     {
-        $this->oneToOne[] = $oneToOne;
+        return $this->joinTable;
     }
 
-    /**
-     * @return Option\ManyToMany[]
-     */
-    public function getManyToMany()
+    public function setTargetEntity($targetEntity)
     {
-        return $this->manyToMany;
+        $this->targetEntity = $targetEntity;
     }
 
-    /**
-     * @return Option\ManyToOne[]
-     */
-    public function getManyToOne()
+    public function setInversedBy($inversedBy)
     {
-        return $this->manyToOne;
+        $this->inversedBy = $inversedBy;
     }
 
-    /**
-     * @return Option\OneToMany[]
-     */
-    public function getOneToMany()
+    public function setMappedBy($mappedBy)
     {
-        return $this->oneToMany;
+        $this->mappedBy = $mappedBy;
     }
 
-    /**
-     * @return Option\OneToOne[]
-     */
-    public function getOneToOne()
+    public function setJoinTable(JoinTable $joinTable)
     {
-        return $this->oneToOne;
+        $this->joinTable = $joinTable;
     }
 }

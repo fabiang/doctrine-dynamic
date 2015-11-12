@@ -33,15 +33,40 @@
  * @license   BSD-2-Clause
  */
 
-namespace Fabiang\DoctrineDynamic\Option;
+namespace Fabiang\DoctrineDynamic\Configuration;
 
-/**
- *
- */
-class OneToOne implements MappingOption
+class Entity
 {
-    public function toArray()
-    {
+    /**
+     * @var string
+     */
+    private $name;
 
+    /**
+     * @var Field[]
+     */
+    private $fields = [];
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function addField(Field $field)
+    {
+        $this->fields[] = $field;
+    }
+
+    /**
+     * @return Field[]
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 }

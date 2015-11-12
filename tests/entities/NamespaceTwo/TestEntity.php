@@ -33,15 +33,49 @@
  * @license   BSD-2-Clause
  */
 
-namespace Fabiang\DoctrineDynamic\Option;
+namespace Fabiang\DoctrineDynamic\Behat\NamespaceTwo\Entity;
+
+use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOne;
 
 /**
- *
+ * @Entity
  */
-class OneToMany implements MappingOption
+class TestEntity
 {
-    public function toArray()
-    {
+    /**
+     * @va integer
+     * @Column(name="id", type="integer")
+     * @Id
+     */
+    private $id;
 
+    /**
+     * @var TestEntityOne
+     */
+    private $oneToOne;
+
+    /**
+     * @var TestEntityOne
+     */
+    private $manyToOne;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getManyToOne()
+    {
+        return $this->manyToOne;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function setManyToOne(TestEntityOne $manyToOne)
+    {
+        $this->manyToOne = $manyToOne;
     }
 }

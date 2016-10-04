@@ -17,3 +17,7 @@ Feature: Loading mapping for entity dynamically
    Given many to many mapping configuration
    Then entity "Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity" should have many-to-many mapping as owning side
    And entity "Fabiang\DoctrineDynamic\Behat\NamespaceTwo\Entity\TestEntity" should have many-to-many mapping as inverse side
+
+  Scenario: Test adding repository to entity
+   Given repository configuration "Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestRepository" for entity "Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity"
+   Then entity "Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity" should have repository "Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestRepository"

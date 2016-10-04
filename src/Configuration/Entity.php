@@ -42,6 +42,8 @@ class Entity
      */
     private $name;
 
+    private $repository;
+
     /**
      * @var Field[]
      */
@@ -68,5 +70,15 @@ class Entity
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
+    public function setRepository($repository)
+    {
+        $this->repository = $repository;
     }
 }

@@ -43,6 +43,10 @@ class MetadataMapper implements Mapper
 
     public function map(ClassMetadata $metadata, EntityConfiguration $configuration)
     {
+        if ($configuration->getRepository()) {
+            $metadata->customRepositoryClassName = $configuration->getRepository();
+        }
+
         foreach ($configuration->getFields() as $field) {
             foreach ($field->getOneToOne() as $oneToOne) {
                 $oneToOneConfig = [

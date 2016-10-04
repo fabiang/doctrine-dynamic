@@ -92,14 +92,16 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     public function oneToOneMappingConfiguration()
     {
         $this->configuration[TestEntityOne::class] = [
-            'oneToOne' => [
+            'fields' => [
                 'oneToOne' => [
-                    [
-                        'targetEntity' => TestEntityTwo::class,
-                        'inversedBy'   => 'oneToOne',
-                        'joinColumns'  => [
-                            'name'                 => 'oneToOne',
-                            'referencedColumnName' => 'id'
+                    'oneToOne' => [
+                        [
+                            'targetEntity' => TestEntityTwo::class,
+                            'inversedBy'   => 'oneToOne',
+                            'joinColumns'  => [
+                                'name'                 => 'oneToOne',
+                                'referencedColumnName' => 'id'
+                            ]
                         ]
                     ]
                 ]
@@ -107,11 +109,13 @@ final class FeatureContext implements Context, SnippetAcceptingContext
         ];
 
         $this->configuration[TestEntityTwo::class] = [
-            'oneToOne' => [
+            'fields' => [
                 'oneToOne' => [
-                    [
-                        'targetEntity' => TestEntityOne::class,
-                        'mappedBy'     => 'oneToOne',
+                    'oneToOne' => [
+                        [
+                            'targetEntity' => TestEntityOne::class,
+                            'mappedBy'     => 'oneToOne',
+                        ]
                     ]
                 ]
             ]
@@ -124,14 +128,16 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     public function manyToOneMappingConfiguration()
     {
         $this->configuration[TestEntityTwo::class] = [
-            'manyToOne' => [
+            'fields' => [
                 'manyToOne' => [
-                    [
-                        'targetEntity' => TestEntityOne::class,
-                        'inversedBy'   => 'oneToMany',
-                        'joinColumns'  => [
-                            'name'                 => 'manyToOne',
-                            'referencedColumnName' => 'id'
+                    'manyToOne' => [
+                        [
+                            'targetEntity' => TestEntityOne::class,
+                            'inversedBy'   => 'oneToMany',
+                            'joinColumns'  => [
+                                'name'                 => 'manyToOne',
+                                'referencedColumnName' => 'id'
+                            ]
                         ]
                     ]
                 ]
@@ -145,11 +151,13 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     public function oneToManyMappingConfiguration()
     {
         $this->configuration[TestEntityOne::class] = [
-            'oneToMany' => [
+            'fields' => [
                 'oneToMany' => [
-                    [
-                        'targetEntity' => TestEntityTwo::class,
-                        'mappedBy'     => 'manyToOne',
+                    'oneToMany' => [
+                        [
+                            'targetEntity' => TestEntityTwo::class,
+                            'mappedBy'     => 'manyToOne',
+                        ]
                     ]
                 ]
             ]
@@ -162,13 +170,15 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     public function manyToManyMappingConfiguration()
     {
         $this->configuration[TestEntityOne::class] = [
-            'manyToMany' => [
+            'fields' => [
                 'manyToMany' => [
-                    [
-                        'targetEntity' => TestEntityTwo::class,
-                        'inversedBy'   => 'manyToMany',
-                        'joinTable'    => [
-                            'name' => 'ManyToManyTableName',
+                    'manyToMany' => [
+                        [
+                            'targetEntity' => TestEntityTwo::class,
+                            'inversedBy'   => 'manyToMany',
+                            'joinTable'    => [
+                                'name' => 'ManyToManyTableName',
+                            ]
                         ]
                     ]
                 ]
@@ -176,15 +186,38 @@ final class FeatureContext implements Context, SnippetAcceptingContext
         ];
 
         $this->configuration[TestEntityTwo::class] = [
-            'manyToMany' => [
+            'fields' => [
                 'manyToMany' => [
-                    [
-                        'targetEntity' => TestEntityOne::class,
-                        'mappedBy'     => 'manyToMany',
+                    'manyToMany' => [
+                        [
+                            'targetEntity' => TestEntityOne::class,
+                            'mappedBy'     => 'manyToMany',
+                        ]
                     ]
                 ]
             ]
         ];
+    }
+
+    /**
+     * @Given repository configuration :repository for entity :entity
+     */
+    public function repositoryConfigurationForEntity($repository, $entity)
+    {
+        $this->configuration[$entity] = [
+            'options' => [
+                'repository' => $repository,
+            ]
+        ];
+    }
+
+    /**
+     * @Then entity :entity should have repository :repository
+     */
+    public function entityShouldHaveRepository($entity, $repository)
+    {
+        $metadata = $this->getClassMetadata($entity);
+        Assert::assertSame($repository, $metadata->customRepositoryClassName);
     }
 
     /**
@@ -322,11 +355,16 @@ final class FeatureContext implements Context, SnippetAcceptingContext
         );
     }
 
-
-    private function getMappingData($entity)
+    private function getClassMetadata($entity)
     {
         $entityManager = $this->getEntityManager();
         $metadata = $entityManager->getClassMetadata($entity);
+        return $metadata;
+    }
+
+    private function getMappingData($entity)
+    {
+        $metadata = $this->getClassMetadata($entity);
         $mappings = $metadata->associationMappings;
         return $mappings;
     }

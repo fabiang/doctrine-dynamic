@@ -62,7 +62,14 @@ class ConfigurationFactory
         $configurationObject = new Configuration;
         foreach ($configurationArray as $entityName => $entityConfig) {
             $entity = new Configuration\Entity($entityName);
-            $this->configureFields($entity, $entityConfig);
+
+            if (isset($entityConfig['options'])) {
+                $this->configureOptions($entity, $entityConfig['options']);
+            }
+
+            if (isset($entityConfig['fields'])) {
+                $this->configureFields($entity, $entityConfig['fields']);
+            }
             $configurationObject->add($entity);
         }
         return $configurationObject;
@@ -76,8 +83,20 @@ class ConfigurationFactory
     {
         foreach ($entityConfig as $fieldName => $fieldConfig) {
             $field = new Configuration\Field($fieldName);
-            $this->configureMappings($field, $fieldConfig, $entity->getName());
+            $this->configureMappings(
+                $field,
+                $fieldConfig,
+                $entity->getName()
+            );
             $entity->addField($field);
+        }
+    }
+
+    private function configureOptions(Configuration\Entity $entity, array $options)
+    {
+        foreach ($options as $option => $value) {
+            $setter = 'set' . ucfirst($option);
+            $entity->{$setter}($value);
         }
     }
 

@@ -84,4 +84,9 @@ class ProxyDriver implements MappingDriver
     {
         return $this->originalDriver->isTransient($className);
     }
+
+    public function getOriginalDriver()
+    {
+        return $this->originalDriver;
+    }
 }

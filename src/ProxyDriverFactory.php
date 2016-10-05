@@ -91,9 +91,16 @@ class ProxyDriverFactory
         $metadataMapper = new MetadataMapper();
 
         $drivers = $driverImplementation->getDrivers();
+        $proxyDrivers = [];
         foreach ($drivers as $namespace => $originalDriver) {
-            $proxyDriver = new ProxyDriver($originalDriver, $configuration, $metadataMapper);
+            $proxyDriver = new ProxyDriver(
+                $originalDriver,
+                $configuration,
+                $metadataMapper
+            );
             $driverImplementation->addDriver($proxyDriver, $namespace);
+            $proxyDrivers[$namespace] = $proxyDriver;
         }
+        return $proxyDrivers;
     }
 }

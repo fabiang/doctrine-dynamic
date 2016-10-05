@@ -24,6 +24,7 @@
 
     <php>
         <ini name="error_reporting" value="-1"/>
+        <ini name="display_errors" value="On"/>
         <ini name="log_errors" value="0"/>
         <ini name="memory_limit" value="-1"/>
     </php>

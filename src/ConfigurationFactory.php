@@ -53,7 +53,7 @@ class ConfigurationFactory
 
     /**
      * @param array|\Traversable $configuration
-     * @return \Fabiang\DoctrineDynamic\Configuration
+     * @return Configuration
      */
     public function factory($configuration)
     {

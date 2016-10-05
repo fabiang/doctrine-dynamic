@@ -58,6 +58,7 @@ class ProxyDriverFactory
     /**
      * @param EntityManagerInterface $entityManager
      * @param array|Traversable|Configuration $configuration
+     * @return ProxyDriver[]
      * @throws InvalidArgumentException
      * @throws RuntimeException
      */

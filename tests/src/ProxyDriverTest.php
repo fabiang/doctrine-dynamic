@@ -120,4 +120,17 @@ final class ProxyDriverTest extends TestCase
 
         $this->assertTrue($this->driver->isTransient('foobar'));
     }
+
+    /**
+     * @test
+     * @covers ::__construct
+     * @covers ::getOriginalDriver
+     */
+    public function getOriginalDriver()
+    {
+        $this->assertSame(
+            $this->originalDriver->reveal(),
+            $this->driver->getOriginalDriver()
+        );
+    }
 }

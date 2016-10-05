@@ -14,10 +14,10 @@ to add own relations between them and your entities.
 ## Features
 
 * Setting all possible relations to entities:
-** OneToOne
-** ManyToOne
-** OneToMany
-** ManyToMany
+  * OneToOne
+  * ManyToOne
+  * OneToMany
+  * ManyToMany
 * Setting repository class
 
 ## Installation

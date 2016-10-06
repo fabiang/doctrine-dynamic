@@ -4,7 +4,7 @@ sudo: false
 
 cache:
   directories:
-    - $HOME/.cache/composer
+    - $HOME/.composer/cache
 
 env:
   matrix:

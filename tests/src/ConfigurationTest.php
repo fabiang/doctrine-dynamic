@@ -35,7 +35,7 @@
 
 namespace Fabiang\DoctrineDynamic;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Fabiang\DoctrineDynamic\Configuration\Entity;
 
 /**

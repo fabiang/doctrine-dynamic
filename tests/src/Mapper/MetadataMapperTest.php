@@ -2,7 +2,7 @@
 
 namespace Fabiang\DoctrineDynamic\Mapper;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Fabiang\DoctrineDynamic\ConfigurationFactory;
 use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOne;

@@ -2,7 +2,7 @@
 
 namespace Fabiang\DoctrineDynamic;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Configuration as DoctrineConfiguration;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;

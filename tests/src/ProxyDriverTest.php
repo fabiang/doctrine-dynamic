@@ -35,7 +35,7 @@
 
 namespace Fabiang\DoctrineDynamic;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Configuration\Entity;

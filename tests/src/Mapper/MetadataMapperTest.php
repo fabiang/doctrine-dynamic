@@ -32,6 +32,7 @@ final class MetadataMapperTest extends TestCase
     /**
      * @dataProvider provideConfig
      * @covers ::map
+     * @covers ::mapRelation
      * @covers Fabiang\DoctrineDynamic\ConfigurationFactory
      * @covers Fabiang\DoctrineDynamic\Configuration
      * @covers Fabiang\DoctrineDynamic\Configuration\Entity

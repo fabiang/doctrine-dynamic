@@ -35,6 +35,7 @@
 
 namespace Fabiang\DoctrineDynamic\Mapper;
 
+use Fabiang\DoctrineDynamic\Configuration\Field;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Configuration\Entity as EntityConfiguration;
 
@@ -48,74 +49,56 @@ class MetadataMapper implements Mapper
         }
 
         foreach ($configuration->getFields() as $field) {
-            foreach ($field->getOneToOne() as $oneToOne) {
-                $oneToOneConfig = [
-                    'fieldName'    => $field->getName(),
-                    'targetEntity' => $oneToOne->getTargetEntity(),
-                    'inversedBy'   => $oneToOne->getInversedBy(),
-                    'mappedBy'     => $oneToOne->getMappedBy(),
-                ];
+            $this->mapRelation('oneToOne', $field, $metadata);
+            $this->mapRelation('manyToOne', $field, $metadata);
+            $this->mapRelation('oneToMany', $field, $metadata);
+            $this->mapRelation('manyToMany', $field, $metadata);
+        }
+    }
 
-                $joinColumn = $oneToOne->getJoinColumn();
-                if (null !== $joinColumn) {
-                    $oneToOneConfig['joinColumns'] = [
-                        [
-                            'name'                 => $joinColumn->getName(),
-                            'referencedColumnName' => $joinColumn->getReferencedColumnName(),
-                        ]
-                    ];
-                }
+    /**
+     * @param string $type
+     * @param Field $field
+     * @param ClassMetadata $metadata
+     */
+    private function mapRelation($type, Field $field, ClassMetadata $metadata)
+    {
+        $getMethod = 'get' . ucfirst($type);
+        $relations = $field->{$getMethod}();
+        $mapMethod = 'map' . ucfirst($type);
 
-                $metadata->mapOneToOne($oneToOneConfig);
+        foreach ($relations as $relation) {
+            $relationConfig = [
+                'fieldName'    => $field->getName(),
+                'targetEntity' => $relation->getTargetEntity(),
+            ];
+
+            if (method_exists($relation, 'getInversedBy')) {
+                $relationConfig['inversedBy'] = $relation->getInversedBy();
             }
 
-            foreach ($field->getManyToOne() as $manyToOne) {
-                $manyToOneConfig = [
-                    'fieldName'    => $field->getName(),
-                    'targetEntity' => $manyToOne->getTargetEntity(),
-                    'inversedBy'   => $manyToOne->getInversedBy(),
-                ];
-
-                $joinColumn = $manyToOne->getJoinColumn();
-                if (null !== $joinColumn) {
-                    $manyToOneConfig['joinColumns'] = [
-                        [
-                            'name'                 => $joinColumn->getName(),
-                            'referencedColumnName' => $joinColumn->getReferencedColumnName(),
-                        ]
-                    ];
-                }
-
-                $metadata->mapManyToOne($manyToOneConfig);
+            if (method_exists($relation, 'getMappedBy')) {
+                $relationConfig['mappedBy'] = $relation->getMappedBy();
             }
 
-            foreach ($field->getOneToMany() as $oneToMany) {
-                $oneToMany = [
-                    'fieldName'    => $field->getName(),
-                    'targetEntity' => $oneToMany->getTargetEntity(),
-                    'mappedBy'     => $oneToMany->getMappedBy(),
+            if (method_exists($relation, 'getJoinColumn')
+                && null !== ($joinColumn = $relation->getJoinColumn())) {
+                $relationConfig['joinColumns'] = [
+                    [
+                        'name'                 => $joinColumn->getName(),
+                        'referencedColumnName' => $joinColumn->getReferencedColumnName(),
+                    ]
                 ];
-
-                $metadata->mapOneToMany($oneToMany);
             }
 
-            foreach ($field->getManyToMany() as $manyToMany) {
-                $manyToManyConfig = [
-                    'fieldName'    => $field->getName(),
-                    'targetEntity' => $manyToMany->getTargetEntity(),
-                    'inversedBy'   => $manyToMany->getInversedBy(),
-                    'mappedBy'     => $manyToMany->getMappedBy(),
+            if (method_exists($relation, 'getJoinTable')
+                && null !== ($joinTable = $relation->getJoinTable())) {
+                $relationConfig['joinTable'] = [
+                    'name' => $joinTable->getName(),
                 ];
-
-                $joinTable = $manyToMany->getJoinTable();
-                if (null !== $joinTable) {
-                    $manyToManyConfig['joinTable'] = [
-                        'name' => $joinTable->getName(),
-                    ];
-                }
-
-                $metadata->mapManyToMany($manyToManyConfig);
             }
+
+            $metadata->{$mapMethod}($relationConfig);
         }
     }
 }

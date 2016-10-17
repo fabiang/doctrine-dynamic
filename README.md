@@ -90,7 +90,7 @@ $proxyDriverFactory->factory($entityManager, $configuration);
 
 ## Development
 
-Thie library is tested with [PHPUnit](https://phpunit.de/) and [Behat](http://behat.org/).
+This library is tested with [PHPUnit](https://phpunit.de/) and [Behat](http://behat.org/).
 
 Fork the project on Github and send an pull request with your changes.
 Make sure you didn't break anything with running the following commands:

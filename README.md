@@ -30,7 +30,7 @@ New to Composer? Read the [introduction](https://getcomposer.org/doc/00-intro.md
 $ composer require fabiang/doctrine-dynamic
 ```
 
-## Framework support
+## Framework integration
 
 * [Zend Framework 2 & 3](https://github.com/fabiang/doctrine-dynamic-zf)
 

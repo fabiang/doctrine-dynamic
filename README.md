@@ -24,15 +24,15 @@ to add own relations between them and your entities.
 
 ## Installation
 
-Run the following `composer` command:
+New to Composer? Read the [introduction](https://getcomposer.org/doc/00-intro.md#introduction). Run the following Composer command:
 
 ```console
 $ composer require fabiang/doctrine-dynamic
 ```
 
-## Available Bindings
+## Framework support
 
-* [Zend Framework 2/3](https://github.com/fabiang/doctrine-dynamic-zf)
+* [Zend Framework 2 & 3](https://github.com/fabiang/doctrine-dynamic-zf)
 
 ## Usage
 
@@ -88,6 +88,19 @@ $proxyDriverFactory = new ProxyDriverFactory();
 $proxyDriverFactory->factory($entityManager, $configuration);
 ```
 
-## LICENSE
+## Development
 
-BSD-2-Clause. See the [LICENSE](LICENSE.md).
+Thie library is tested with [PHPUnit](https://phpunit.de/) and [Behat](http://behat.org/).
+
+Fork the project on Github and send an pull request with your changes.
+Make sure you didn't break anything with running the following commands:
+
+```console
+composer install
+./vendor/bin/phpunit
+./vendor/bin/behat
+```
+
+## Licence
+
+BSD-2-Clause. See the [LICENSE.md](LICENSE.md).

@@ -2,6 +2,9 @@ language: php
 
 sudo: false
 
+git:
+  depth: 2
+
 cache:
   directories:
     - $HOME/.composer/cache

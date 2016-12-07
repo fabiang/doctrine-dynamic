@@ -20,18 +20,18 @@ php:
   - 5.6
   - nightly
   - hhvm
-  
+
 before_install:
   - composer self-up
   - composer config --global github-oauth.github.com $GITHUB_OAUTH_TOKEN
 
 install:
-  - composer update --no-interaction --prefer-stable --no-suggest $PREFER_LOWEST
+  - composer update --no-interaction --prefer-stable --prefer-dist --no-suggest --no-scripts --no-plugins $PREFER_LOWEST
 
 script:
   - ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
   - ./vendor/bin/behat -f progress
-  
+
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml

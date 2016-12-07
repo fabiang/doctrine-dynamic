@@ -26,7 +26,7 @@ before_install:
   - composer config --global github-oauth.github.com $GITHUB_OAUTH_TOKEN
 
 install:
-  - composer update --no-interaction --prefer-stable $PREFER_LOWEST
+  - composer update --no-interaction --prefer-stable --no-suggest $PREFER_LOWEST
 
 script:
   - ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml

@@ -38,7 +38,7 @@ namespace Fabiang\DoctrineDynamic;
 use Doctrine\ORM\EntityManagerInterface;
 use Traversable;
 use Fabiang\DoctrineDynamic\Exception\InvalidArgumentException;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Fabiang\DoctrineDynamic\Exception\RuntimeException;
 use Fabiang\DoctrineDynamic\Mapper\MetadataMapper;
 

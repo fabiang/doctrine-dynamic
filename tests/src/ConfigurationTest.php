@@ -37,18 +37,22 @@ namespace Fabiang\DoctrineDynamic;
 
 use PHPUnit\Framework\TestCase;
 use Fabiang\DoctrineDynamic\Configuration\Entity;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @coversDefaultClass Fabiang\DoctrineDynamic\Configuration
  */
 final class ConfigurationTest extends TestCase
 {
+
+    use ProphecyTrait;
+
     /**
      * @var Configuration
      */
     private $config;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->config = new Configuration;
     }
@@ -71,4 +75,5 @@ final class ConfigurationTest extends TestCase
         $this->assertSame($entity, $this->config->get('foo'));
         $this->assertNull($this->config->get('bar'));
     }
+
 }

@@ -36,15 +36,19 @@
 namespace Fabiang\DoctrineDynamic;
 
 use PHPUnit\Framework\TestCase;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Configuration\Entity;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @coversDefaultClass Fabiang\DoctrineDynamic\ProxyDriver
  */
 final class ProxyDriverTest extends TestCase
 {
+
+    use ProphecyTrait;
+
     /**
      * @var ProxyDriver
      */
@@ -65,7 +69,7 @@ final class ProxyDriverTest extends TestCase
      */
     private $mapper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->originalDriver = $this->prophesize(MappingDriver::class);
         $this->configuration  = new Configuration;
@@ -133,4 +137,5 @@ final class ProxyDriverTest extends TestCase
             $this->driver->getOriginalDriver()
         );
     }
+
 }

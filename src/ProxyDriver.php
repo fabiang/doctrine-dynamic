@@ -35,8 +35,8 @@
 
 namespace Fabiang\DoctrineDynamic;
 
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Mapper\Mapper;
 
 class ProxyDriver implements MappingDriver

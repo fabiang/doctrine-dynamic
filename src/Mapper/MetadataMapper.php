@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2021 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,14 +29,14 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
+ * @copyright 2015-2021 Fabian Grutschus. All rights reserved.
  * @license   BSD-2-Clause
  */
 
 namespace Fabiang\DoctrineDynamic\Mapper;
 
 use Fabiang\DoctrineDynamic\Configuration\Field;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Configuration\Entity as EntityConfiguration;
 
 class MetadataMapper implements Mapper

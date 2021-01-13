@@ -37,22 +37,23 @@ namespace Fabiang\DoctrineDynamic\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Behat\Behat\Tester\Exception\PendingException;
 use Doctrine\ORM\Tools\Setup as DoctrineSetup;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
 use Fabiang\DoctrineDynamic\ProxyDriverFactory;
 use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOne;
 use Fabiang\DoctrineDynamic\Behat\NamespaceTwo\Entity\TestEntity as TestEntityTwo;
-use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
-use PHPUnit_Framework_Assert as Assert;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use PHPUnit\Framework\Assert;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /**
  * Defines application features from the specific context.
  */
 final class FeatureContext implements Context, SnippetAcceptingContext
 {
+
+    use ArraySubsetAsserts;
+
     /**
      * @var array
      */
@@ -225,10 +226,10 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function entityShouldHaveOneToOneMappingAsOwningSide($entity)
     {
-        $mappings = $this->getMappingData($entity);
+        $mappings     = $this->getMappingData($entity);
         Assert::assertArrayHasKey('oneToOne', $mappings);
         $mappingField = $mappings['oneToOne'];
-        Assert::assertArraySubset(
+        self::assertArraySubset(
             [
                 'fieldName'    => 'oneToOne',
                 'targetEntity' => TestEntityTwo::class,
@@ -251,10 +252,10 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function entityShouldHaveOneToOneMappingAsInverseSide($entity)
     {
-        $mappings = $this->getMappingData($entity);
+        $mappings     = $this->getMappingData($entity);
         Assert::assertArrayHasKey('oneToOne', $mappings);
         $mappingField = $mappings['oneToOne'];
-        Assert::assertArraySubset(
+        self::assertArraySubset(
             [
                 'fieldName'    => 'oneToOne',
                 'targetEntity' => TestEntityOne::class,
@@ -271,10 +272,10 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function entityShouldHaveManyToOneMappingAsOwningSide($entity)
     {
-        $mappings = $this->getMappingData($entity);
+        $mappings     = $this->getMappingData($entity);
         Assert::assertArrayHasKey('manyToOne', $mappings);
         $mappingField = $mappings['manyToOne'];
-        Assert::assertArraySubset(
+        self::assertArraySubset(
             [
                 'fieldName'    => 'manyToOne',
                 'targetEntity' => TestEntityOne::class,
@@ -297,10 +298,10 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function entityShouldHaveOneToManyMappingAsInverseSide($entity)
     {
-        $mappings = $this->getMappingData($entity);
+        $mappings     = $this->getMappingData($entity);
         Assert::assertArrayHasKey('oneToMany', $mappings);
         $mappingField = $mappings['oneToMany'];
-        Assert::assertArraySubset(
+        self::assertArraySubset(
             [
                 'fieldName'    => 'oneToMany',
                 'targetEntity' => TestEntityTwo::class,
@@ -317,17 +318,17 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function entityShouldHaveManyToManyMappingAsOwningSide($entity)
     {
-        $mappings = $this->getMappingData($entity);
+        $mappings     = $this->getMappingData($entity);
         Assert::assertArrayHasKey('manyToMany', $mappings);
         $mappingField = $mappings['manyToMany'];
-        Assert::assertArraySubset(
+        self::assertArraySubset(
             [
                 'fieldName'    => 'manyToMany',
                 'targetEntity' => TestEntityTwo::class,
                 'inversedBy'   => 'manyToMany',
                 'mappedBy'     => null,
                 'isOwningSide' => true,
-                'joinTable'  => [
+                'joinTable'    => [
                     'name' => 'ManyToManyTableName',
                 ]
             ],
@@ -340,10 +341,10 @@ final class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function entityShouldHaveManyToManyMappingAsInverseSide($entity)
     {
-        $mappings = $this->getMappingData($entity);
+        $mappings     = $this->getMappingData($entity);
         Assert::assertArrayHasKey('manyToMany', $mappings);
         $mappingField = $mappings['manyToMany'];
-        Assert::assertArraySubset(
+        self::assertArraySubset(
             [
                 'fieldName'    => 'manyToMany',
                 'targetEntity' => TestEntityOne::class,
@@ -358,7 +359,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     private function getClassMetadata($entity)
     {
         $entityManager = $this->getEntityManager();
-        $metadata = $entityManager->getClassMetadata($entity);
+        $metadata      = $entityManager->getClassMetadata($entity);
         return $metadata;
     }
 
@@ -375,7 +376,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
             return $this->entityManager;
         }
 
-        $config = DoctrineSetup::createConfiguration(true);
+        $config        = DoctrineSetup::createConfiguration(true);
         $mappingDriver = new MappingDriverChain();
 
         foreach ($this->paths as $namespace => $path) {
@@ -384,13 +385,14 @@ final class FeatureContext implements Context, SnippetAcceptingContext
 
         $config->setMetadataDriverImpl($mappingDriver);
         $this->entityManager = DoctrineEntityManager::create(
-            [
-                'driver' => 'pdo_sqlite',
-                'path'   => ':memory:'
-            ],
-            $config
+                [
+                    'driver' => 'pdo_sqlite',
+                    'path'   => ':memory:'
+                ],
+                $config
         );
         $this->proxyDriverFactory->factory($this->entityManager, $this->configuration);
         return $this->entityManager;
     }
+
 }

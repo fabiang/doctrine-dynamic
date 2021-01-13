@@ -35,7 +35,7 @@
 
 namespace Fabiang\DoctrineDynamic;
 
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 use Fabiang\DoctrineDynamic\Exception\UnexpectedValueException;
 use Fabiang\DoctrineDynamic\Exception\RuntimeException;
 

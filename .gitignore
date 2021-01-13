@@ -1,3 +1,4 @@
 /vendor/
 /tests/logs/*
 !/tests/logs/.gitkeep
+.phpunit.result.cache

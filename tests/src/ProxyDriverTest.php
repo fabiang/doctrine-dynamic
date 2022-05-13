@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,53 +27,43 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic;
 
-use PHPUnit\Framework\TestCase;
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Fabiang\DoctrineDynamic\Configuration\Entity;
+use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
 
 /**
  * @coversDefaultClass Fabiang\DoctrineDynamic\ProxyDriver
  */
 final class ProxyDriverTest extends TestCase
 {
-
     use ProphecyTrait;
 
-    /**
-     * @var ProxyDriver
-     */
+    /** @var ProxyDriver */
     private $driver;
 
-    /**
-     * @var \Prophecy\Prophecy\ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $originalDriver;
 
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     private $configuration;
 
-    /**
-     * @var \Prophecy\Prophecy\ObjectProphecy
-     */
+    /** @var ObjectProphecy */
     private $mapper;
 
     protected function setUp(): void
     {
         $this->originalDriver = $this->prophesize(MappingDriver::class);
-        $this->configuration  = new Configuration;
-        $this->mapper         = $this->prophesize(Mapper\Mapper::class);
+        $this->configuration  = new Configuration();
+        $this->mapper         = $this->prophesize(Mapper\MapperInterface::class);
         $this->driver         = new ProxyDriver(
             $this->originalDriver->reveal(),
             $this->configuration,
@@ -82,13 +72,14 @@ final class ProxyDriverTest extends TestCase
     }
 
     /**
+     * @uses Fabiang\DoctrineDynamic\Configuration
+     * @uses Fabiang\DoctrineDynamic\Configuration\Entity
+     *
      * @test
      * @covers ::__construct
      * @covers ::loadMetadataForClass
-     * @uses Fabiang\DoctrineDynamic\Configuration
-     * @uses Fabiang\DoctrineDynamic\Configuration\Entity
      */
-    public function loadingMetaData()
+    public function loadingMetaData(): void
     {
         $classMetaData = $this->prophesize(ClassMetadata::class)->reveal();
         $this->originalDriver->loadMetadataForClass('baz', $classMetaData)
@@ -101,22 +92,23 @@ final class ProxyDriverTest extends TestCase
         $this->mapper->map($classMetaData, $entity)
             ->shouldBeCalled();
 
-        $this->assertSame('something', $this->driver->loadMetadataForClass('baz', $classMetaData));
+        $this->driver->loadMetadataForClass('baz', $classMetaData);
     }
 
     /**
+     * @uses Fabiang\DoctrineDynamic\ProxyDriver::__construct
+     *
      * @test
      * @covers ::getAllClassNames
      * @covers ::isTransient
-     * @uses Fabiang\DoctrineDynamic\ProxyDriver::__construct
      */
-    public function proxying()
+    public function proxying(): void
     {
         $this->originalDriver->getAllClassNames()
             ->shouldBeCalled()
-            ->willReturn(true);
+            ->willReturn([]);
 
-        $this->assertTrue($this->driver->getAllClassNames());
+        $this->assertSame([], $this->driver->getAllClassNames());
 
         $this->originalDriver->isTransient('foobar')
             ->shouldBeCalled()
@@ -130,12 +122,11 @@ final class ProxyDriverTest extends TestCase
      * @covers ::__construct
      * @covers ::getOriginalDriver
      */
-    public function getOriginalDriver()
+    public function getOriginalDriver(): void
     {
         $this->assertSame(
             $this->originalDriver->reveal(),
             $this->driver->getOriginalDriver()
         );
     }
-
 }

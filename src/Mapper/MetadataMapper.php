@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2021 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,22 +27,22 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015-2021 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic\Mapper;
 
-use Fabiang\DoctrineDynamic\Configuration\Field;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Fabiang\DoctrineDynamic\Configuration\Entity as EntityConfiguration;
+use Fabiang\DoctrineDynamic\Configuration\Field;
 
-class MetadataMapper implements Mapper
+use function method_exists;
+use function ucfirst;
+
+class MetadataMapper implements MapperInterface
 {
-
-    public function map(ClassMetadata $metadata, EntityConfiguration $configuration)
+    public function map(ClassMetadata $metadata, EntityConfiguration $configuration): void
     {
         if ($configuration->getRepository()) {
             $metadata->customRepositoryClassName = $configuration->getRepository();
@@ -56,12 +56,7 @@ class MetadataMapper implements Mapper
         }
     }
 
-    /**
-     * @param string $type
-     * @param Field $field
-     * @param ClassMetadata $metadata
-     */
-    private function mapRelation($type, Field $field, ClassMetadata $metadata)
+    private function mapRelation(string $type, Field $field, ClassMetadata $metadata): void
     {
         $getMethod = 'get' . ucfirst($type);
         $relations = $field->{$getMethod}();
@@ -81,18 +76,22 @@ class MetadataMapper implements Mapper
                 $relationConfig['mappedBy'] = $relation->getMappedBy();
             }
 
-            if (method_exists($relation, 'getJoinColumn')
-                && null !== ($joinColumn = $relation->getJoinColumn())) {
+            if (
+                method_exists($relation, 'getJoinColumn')
+                && null !== ($joinColumn = $relation->getJoinColumn())
+            ) {
                 $relationConfig['joinColumns'] = [
                     [
                         'name'                 => $joinColumn->getName(),
                         'referencedColumnName' => $joinColumn->getReferencedColumnName(),
-                    ]
+                    ],
                 ];
             }
 
-            if (method_exists($relation, 'getJoinTable')
-                && null !== ($joinTable = $relation->getJoinTable())) {
+            if (
+                method_exists($relation, 'getJoinTable')
+                && null !== ($joinTable = $relation->getJoinTable())
+            ) {
                 $relationConfig['joinTable'] = [
                     'name' => $joinTable->getName(),
                 ];

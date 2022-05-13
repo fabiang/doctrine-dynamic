@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,72 +27,57 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic\Configuration\Mapping;
 
-class OneToOne implements MappingConfig
+use Fabiang\DoctrineDynamic\Configuration\Mapping\JoinColumn;
+
+class OneToOne implements MappingConfigInterface
 {
-    /**
-     * @var string
-     */
-    private $targetEntity;
+    private ?string $targetEntity   = null;
+    private ?string $mappedBy       = null;
+    private ?string $inversedBy     = null;
+    private ?JoinColumn $joinColumn = null;
 
-    /**
-     * @var string
-     */
-    private $mappedBy;
-
-    /**
-     * @var string
-     */
-    private $inversedBy;
-
-    /**
-     * @var JoinColumn
-     */
-    private $joinColumn;
-
-    public function getTargetEntity()
+    public function getTargetEntity(): ?string
     {
         return $this->targetEntity;
     }
 
-    public function getMappedBy()
+    public function getMappedBy(): ?string
     {
         return $this->mappedBy;
     }
 
-    public function getInversedBy()
+    public function getInversedBy(): ?string
     {
         return $this->inversedBy;
     }
 
-    public function getJoinColumn()
+    public function getJoinColumn(): ?JoinColumn
     {
         return $this->joinColumn;
     }
 
-    public function setTargetEntity($targetEntity)
+    public function setTargetEntity(string $targetEntity): void
     {
         $this->targetEntity = $targetEntity;
     }
 
-    public function setMappedBy($mappedBy)
+    public function setMappedBy(?string $mappedBy): void
     {
         $this->mappedBy = $mappedBy;
     }
 
-    public function setInversedBy($inversedBy)
+    public function setInversedBy(?string $inversedBy): void
     {
         $this->inversedBy = $inversedBy;
     }
 
-    public function setJoinColumn(JoinColumn $joinColumn)
+    public function setJoinColumn(?JoinColumn $joinColumn): void
     {
         $this->joinColumn = $joinColumn;
     }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,14 +27,14 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic\Behat\NamespaceTwo\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOne;
 
 /**
@@ -43,48 +43,35 @@ use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOn
 class TestEntity
 {
     /**
-     * @va integer
      * @Column(name="id", type="integer")
      * @Id
      */
-    private $id;
-
-    /**
-     * @var TestEntityOne
-     */
-    private $oneToOne;
-
-    /**
-     * @var TestEntityOne
-     */
-    private $manyToOne;
-
-    /**
-     * @var ArrayCollection
-     */
-    private $manyToMany;
+    private ?int $id                  = null;
+    private ?TestEntityOne $oneToOne  = null;
+    private ?TestEntityOne $manyToOne = null;
+    private Collection $manyToMany;
 
     public function __construct()
     {
-        $this->manyToMany = new ArrayCollection;
+        $this->manyToMany = new ArrayCollection();
     }
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getManyToOne()
+    public function getManyToOne(): ?TestEntityOne
     {
         return $this->manyToOne;
     }
 
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    public function setManyToOne(TestEntityOne $manyToOne)
+    public function setManyToOne(TestEntityOne $manyToOne): void
     {
         $this->manyToOne = $manyToOne;
     }

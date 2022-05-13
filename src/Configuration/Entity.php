@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,34 +27,27 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic\Configuration;
 
 class Entity
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    private $repository;
+    private ?string $repository = null;
 
-    /**
-     * @var Field[]
-     */
-    private $fields = [];
+    /** @var Field[] */
+    private array $fields = [];
 
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
 
-    public function addField(Field $field)
+    public function addField(Field $field): void
     {
         $this->fields[] = $field;
     }
@@ -62,22 +55,22 @@ class Entity
     /**
      * @return Field[]
      */
-    public function getFields()
+    public function getFields(): array
     {
         return $this->fields;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getRepository()
+    public function getRepository(): ?string
     {
         return $this->repository;
     }
 
-    public function setRepository($repository)
+    public function setRepository(?string $repository): void
     {
         $this->repository = $repository;
     }

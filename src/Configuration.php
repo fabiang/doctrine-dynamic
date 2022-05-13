@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,11 +27,9 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic;
 
@@ -39,25 +37,15 @@ use Fabiang\DoctrineDynamic\Configuration\Entity;
 
 class Configuration
 {
-    /**
-     * @var Entity[]
-     */
-    private $entities = [];
+    /** @var Entity[] */
+    private array $entities = [];
 
-    /**
-     * @param string $name
-     * @return boolean
-     */
-    public function has($name)
+    public function has(string $name): bool
     {
         return isset($this->entities[$name]);
     }
 
-    /**
-     * @param string $name
-     * @return Entity
-     */
-    public function get($name)
+    public function get(string $name): ?Entity
     {
         if ($this->has($name)) {
             return $this->entities[$name];
@@ -66,10 +54,7 @@ class Configuration
         return null;
     }
 
-    /**
-     * @param Entity $entity
-     */
-    public function add(Entity $entity)
+    public function add(Entity $entity): void
     {
         $this->entities[$entity->getName()] = $entity;
     }
@@ -77,7 +62,7 @@ class Configuration
     /**
      * @return Entity[]
      */
-    public function getEntities()
+    public function getEntities(): array
     {
         return $this->entities;
     }

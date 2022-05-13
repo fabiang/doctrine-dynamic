@@ -1,0 +1,65 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+    - '*'
+    pull_request:
+    - '*'
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php:
+        - version: 7.4
+          coverage: false
+        - version: 8.0
+          coverage: true
+        - version: 8.1
+          coverage: false
+        prefer-lowest: ['', '--prefer-lowest']
+
+    name: Unit Tests - PHP ${{ matrix.php.version }} ${{ matrix.prefer-lowest }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php.version }}
+        extensions: mbstring
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Update dependencies
+      run: composer update --prefer-dist --no-progress --with-all-dependencies ${{ matrix.prefer-lowest }}
+
+    - name: Run test suite
+      if: ${{ ! matrix.php.coverage }}
+      run: ./vendor/bin/phpunit --verbose
+
+    - name: Run test suite with code coverage
+      if: ${{ matrix.php.coverage }}
+      run: ./vendor/bin/phpunit --verbose --coverage-clover=build/logs/clover.xml
+      env:
+        XDEBUG_MODE: coverage
+
+    - name: Upload code coverage to Scrutinizer
+      if: ${{ matrix.php.coverage }}
+      run: |
+        wget -q https://scrutinizer-ci.com/ocular.phar
+        php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml || true

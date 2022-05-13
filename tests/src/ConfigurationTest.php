@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,16 +27,14 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic;
 
-use PHPUnit\Framework\TestCase;
 use Fabiang\DoctrineDynamic\Configuration\Entity;
+use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
@@ -44,25 +42,23 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 final class ConfigurationTest extends TestCase
 {
-
     use ProphecyTrait;
 
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     private $config;
 
     protected function setUp(): void
     {
-        $this->config = new Configuration;
+        $this->config = new Configuration();
     }
 
     /**
+     * @uses Fabiang\DoctrineDynamic\Configuration\Entity
+     *
      * @covers ::add
      * @covers ::getEntities
      * @covers ::has
      * @covers ::get
-     * @uses Fabiang\DoctrineDynamic\Configuration\Entity
      */
     public function testConfigObject()
     {
@@ -75,5 +71,4 @@ final class ConfigurationTest extends TestCase
         $this->assertSame($entity, $this->config->get('foo'));
         $this->assertNull($this->config->get('bar'));
     }
-
 }

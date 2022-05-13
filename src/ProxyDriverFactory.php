@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,48 +27,47 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Traversable;
-use Fabiang\DoctrineDynamic\Exception\InvalidArgumentException;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Fabiang\DoctrineDynamic\Exception\InvalidArgumentException;
 use Fabiang\DoctrineDynamic\Exception\RuntimeException;
 use Fabiang\DoctrineDynamic\Mapper\MetadataMapper;
+use Traversable;
+
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_object;
+use function sprintf;
 
 class ProxyDriverFactory
 {
-
-    /**
-     * @var ConfigurationFactory
-     */
-    private $configurationFactory;
+    private ConfigurationFactory $configurationFactory;
 
     public function __construct()
     {
-        $this->configurationFactory = new ConfigurationFactory;
+        $this->configurationFactory = new ConfigurationFactory();
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param array|Traversable|Configuration $configuration
+     * @param iterable|Configuration $configuration
      * @return ProxyDriver[]
      * @throws InvalidArgumentException
      * @throws RuntimeException
      */
-    public function factory(EntityManagerInterface $entityManager, $configuration)
+    public function factory(EntityManagerInterface $entityManager, $configuration): array
     {
         if (is_array($configuration) || $configuration instanceof Traversable) {
             $configuration = $this->configurationFactory->factory($configuration);
         }
 
-        if (!($configuration instanceof Configuration)) {
+        if (! $configuration instanceof Configuration) {
             throw new InvalidArgumentException(sprintf(
                 'Argument #1 passed to "%s" must be an instance of "%s", "%s" or an array, "%s" given',
                 __METHOD__,
@@ -81,7 +80,7 @@ class ProxyDriverFactory
         $doctrineConfig = $entityManager->getConfiguration();
 
         $driverImplementation = $doctrineConfig->getMetadataDriverImpl();
-        if (!($driverImplementation instanceof MappingDriverChain)) {
+        if (! $driverImplementation instanceof MappingDriverChain) {
             throw new RuntimeException(sprintf(
                 'Driver implementation is no instance of "%s", instance of "%s" given',
                 MappingDriverChain::class,
@@ -92,6 +91,7 @@ class ProxyDriverFactory
         $metadataMapper = new MetadataMapper();
 
         $drivers = $driverImplementation->getDrivers();
+
         $proxyDrivers = [];
         foreach ($drivers as $namespace => $originalDriver) {
             $proxyDriver = new ProxyDriver(

@@ -7,10 +7,12 @@ This is useful if you use foreign entities, which you can't change, but you like
 to add own relations between them and your entities.
 
 [![Latest Stable Version](https://poser.pugx.org/fabiang/doctrine-dynamic/version)](https://packagist.org/packages/fabiang/doctrine-dynamic)
-[![License](https://poser.pugx.org/fabiang/doctrine-dynamic/license)](https://packagist.org/packages/fabiang/doctrine-dynamic)
-[![Build Status](https://travis-ci.com/fabiang/doctrine-dynamic.svg?branch=master)](https://travis-ci.com/fabiang/doctrine-dynamic)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/?branch=master)
+[![License](https://poser.pugx.org/fabiang/doctrine-dynamic/license)](https://packagist.org/packages/fabiang/doctrine-dynamic)  
+[![Unit Tests](https://github.com/fabiang/doctrine-dynamic/actions/workflows/unit.yml/badge.svg)](https://github.com/fabiang/doctrine-dynamic/actions/workflows/unit.yml)
+[![Integration Tests](https://github.com/fabiang/doctrine-dynamic/actions/workflows/behat.yml/badge.svg)](https://github.com/fabiang/doctrine-dynamic/actions/workflows/behat.yml)
+[![Static Code Analysis](https://github.com/fabiang/doctrine-dynamic/actions/workflows/static.yml/badge.svg)](https://github.com/fabiang/doctrine-dynamic/actions/workflows/static.yml)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/?branch=main)
+[![Code Coverage](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/fabiang/doctrine-dynamic/?branch=main)
 
 ## Features
 
@@ -31,7 +33,7 @@ $ composer require fabiang/doctrine-dynamic
 
 ## Framework integration
 
-* [Laminas (also Zend Framework 2 & 3)](https://github.com/fabiang/doctrine-dynamic-laminas)
+* [Laminas](https://github.com/fabiang/doctrine-dynamic-laminas)
 
 ## Usage
 

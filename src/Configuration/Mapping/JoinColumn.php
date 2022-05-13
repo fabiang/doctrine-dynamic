@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,38 +27,29 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic\Configuration\Mapping;
 
 class JoinColumn
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    private string $referencedColumnName;
 
-    /**
-     * @var string
-     */
-    private $referencedColumnName;
-
-    public function __construct($name, $referencedColumnName)
+    public function __construct(string $name, string $referencedColumnName)
     {
         $this->name                 = $name;
         $this->referencedColumnName = $referencedColumnName;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getReferencedColumnName()
+    public function getReferencedColumnName(): string
     {
         return $this->referencedColumnName;
     }

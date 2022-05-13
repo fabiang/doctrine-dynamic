@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,52 +27,36 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use Doctrine\ORM\Tools\Setup as DoctrineSetup;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
-use Fabiang\DoctrineDynamic\ProxyDriverFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Tools\Setup as DoctrineSetup;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOne;
 use Fabiang\DoctrineDynamic\Behat\NamespaceTwo\Entity\TestEntity as TestEntityTwo;
-use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use Fabiang\DoctrineDynamic\ProxyDriverFactory;
 use PHPUnit\Framework\Assert;
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 /**
  * Defines application features from the specific context.
  */
 final class FeatureContext implements Context, SnippetAcceptingContext
 {
-
     use ArraySubsetAsserts;
 
-    /**
-     * @var array
-     */
-    private $paths = [];
-
-    /**
-     * @var DoctrineEntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var ProxyDriverFactory
-     */
-    private $proxyDriverFactory;
-
-    /**
-     * @var array
-     */
-    private $configuration = [];
+    private array $paths                          = [];
+    private ?DoctrineEntityManager $entityManager = null;
+    private ProxyDriverFactory $proxyDriverFactory;
+    private array $configuration = [];
 
     /**
      * Initializes context.
@@ -90,7 +74,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Given One to one mapping configuration
      */
-    public function oneToOneMappingConfiguration()
+    public function oneToOneMappingConfiguration(): void
     {
         $this->configuration[TestEntityOne::class] = [
             'fields' => [
@@ -101,12 +85,12 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                             'inversedBy'   => 'oneToOne',
                             'joinColumns'  => [
                                 'name'                 => 'oneToOne',
-                                'referencedColumnName' => 'id'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'referencedColumnName' => 'id',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->configuration[TestEntityTwo::class] = [
@@ -116,17 +100,17 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                         [
                             'targetEntity' => TestEntityOne::class,
                             'mappedBy'     => 'oneToOne',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @Given many to one mapping configuration
      */
-    public function manyToOneMappingConfiguration()
+    public function manyToOneMappingConfiguration(): void
     {
         $this->configuration[TestEntityTwo::class] = [
             'fields' => [
@@ -137,19 +121,19 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                             'inversedBy'   => 'oneToMany',
                             'joinColumns'  => [
                                 'name'                 => 'manyToOne',
-                                'referencedColumnName' => 'id'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'referencedColumnName' => 'id',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @Given one to many mapping configuration
      */
-    public function oneToManyMappingConfiguration()
+    public function oneToManyMappingConfiguration(): void
     {
         $this->configuration[TestEntityOne::class] = [
             'fields' => [
@@ -158,17 +142,17 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                         [
                             'targetEntity' => TestEntityTwo::class,
                             'mappedBy'     => 'manyToOne',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @Given many to many mapping configuration
      */
-    public function manyToManyMappingConfiguration()
+    public function manyToManyMappingConfiguration(): void
     {
         $this->configuration[TestEntityOne::class] = [
             'fields' => [
@@ -179,11 +163,11 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                             'inversedBy'   => 'manyToMany',
                             'joinTable'    => [
                                 'name' => 'ManyToManyTableName',
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->configuration[TestEntityTwo::class] = [
@@ -193,29 +177,29 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                         [
                             'targetEntity' => TestEntityOne::class,
                             'mappedBy'     => 'manyToMany',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * @Given repository configuration :repository for entity :entity
      */
-    public function repositoryConfigurationForEntity($repository, $entity)
+    public function repositoryConfigurationForEntity(string $repository, string $entity): void
     {
         $this->configuration[$entity] = [
             'options' => [
                 'repository' => $repository,
-            ]
+            ],
         ];
     }
 
     /**
      * @Then entity :entity should have repository :repository
      */
-    public function entityShouldHaveRepository($entity, $repository)
+    public function entityShouldHaveRepository(string $entity, string $repository): void
     {
         $metadata = $this->getClassMetadata($entity);
         Assert::assertSame($repository, $metadata->customRepositoryClassName);
@@ -224,9 +208,9 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Then Entity :entity should have one-to-one mapping as owning side
      */
-    public function entityShouldHaveOneToOneMappingAsOwningSide($entity)
+    public function entityShouldHaveOneToOneMappingAsOwningSide(string $entity): void
     {
-        $mappings     = $this->getMappingData($entity);
+        $mappings = $this->getMappingData($entity);
         Assert::assertArrayHasKey('oneToOne', $mappings);
         $mappingField = $mappings['oneToOne'];
         self::assertArraySubset(
@@ -240,8 +224,8 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                     [
                         'name'                 => 'oneToOne',
                         'referencedColumnName' => 'id',
-                    ]
-                ]
+                    ],
+                ],
             ],
             $mappingField
         );
@@ -250,9 +234,9 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Then Entity :entity should have one-to-one mapping as inverse side
      */
-    public function entityShouldHaveOneToOneMappingAsInverseSide($entity)
+    public function entityShouldHaveOneToOneMappingAsInverseSide(string $entity): void
     {
-        $mappings     = $this->getMappingData($entity);
+        $mappings = $this->getMappingData($entity);
         Assert::assertArrayHasKey('oneToOne', $mappings);
         $mappingField = $mappings['oneToOne'];
         self::assertArraySubset(
@@ -270,9 +254,9 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Then entity :entity should have many-to-one mapping as owning side
      */
-    public function entityShouldHaveManyToOneMappingAsOwningSide($entity)
+    public function entityShouldHaveManyToOneMappingAsOwningSide(string $entity): void
     {
-        $mappings     = $this->getMappingData($entity);
+        $mappings = $this->getMappingData($entity);
         Assert::assertArrayHasKey('manyToOne', $mappings);
         $mappingField = $mappings['manyToOne'];
         self::assertArraySubset(
@@ -286,8 +270,8 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                     [
                         'name'                 => 'manyToOne',
                         'referencedColumnName' => 'id',
-                    ]
-                ]
+                    ],
+                ],
             ],
             $mappingField
         );
@@ -296,9 +280,9 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Then entity :entity should have one-to-many mapping as inverse side
      */
-    public function entityShouldHaveOneToManyMappingAsInverseSide($entity)
+    public function entityShouldHaveOneToManyMappingAsInverseSide(string $entity): void
     {
-        $mappings     = $this->getMappingData($entity);
+        $mappings = $this->getMappingData($entity);
         Assert::assertArrayHasKey('oneToMany', $mappings);
         $mappingField = $mappings['oneToMany'];
         self::assertArraySubset(
@@ -316,9 +300,9 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Then entity :entity should have many-to-many mapping as owning side
      */
-    public function entityShouldHaveManyToManyMappingAsOwningSide($entity)
+    public function entityShouldHaveManyToManyMappingAsOwningSide(string $entity): void
     {
-        $mappings     = $this->getMappingData($entity);
+        $mappings = $this->getMappingData($entity);
         Assert::assertArrayHasKey('manyToMany', $mappings);
         $mappingField = $mappings['manyToMany'];
         self::assertArraySubset(
@@ -330,7 +314,7 @@ final class FeatureContext implements Context, SnippetAcceptingContext
                 'isOwningSide' => true,
                 'joinTable'    => [
                     'name' => 'ManyToManyTableName',
-                ]
+                ],
             ],
             $mappingField
         );
@@ -339,9 +323,9 @@ final class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @Then entity :entity should have many-to-many mapping as inverse side
      */
-    public function entityShouldHaveManyToManyMappingAsInverseSide($entity)
+    public function entityShouldHaveManyToManyMappingAsInverseSide(string $entity): void
     {
-        $mappings     = $this->getMappingData($entity);
+        $mappings = $this->getMappingData($entity);
         Assert::assertArrayHasKey('manyToMany', $mappings);
         $mappingField = $mappings['manyToMany'];
         self::assertArraySubset(
@@ -356,21 +340,22 @@ final class FeatureContext implements Context, SnippetAcceptingContext
         );
     }
 
-    private function getClassMetadata($entity)
+    private function getClassMetadata(string $entity): ClassMetadata
     {
         $entityManager = $this->getEntityManager();
-        $metadata      = $entityManager->getClassMetadata($entity);
-        return $metadata;
+        return $entityManager->getClassMetadata($entity);
     }
 
-    private function getMappingData($entity)
+    /**
+     * @psalm-var array<string, array<string, mixed>>
+     */
+    private function getMappingData(string $entity): array
     {
         $metadata = $this->getClassMetadata($entity);
-        $mappings = $metadata->associationMappings;
-        return $mappings;
+        return $metadata->associationMappings;
     }
 
-    private function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
         if (null !== $this->entityManager) {
             return $this->entityManager;
@@ -385,14 +370,13 @@ final class FeatureContext implements Context, SnippetAcceptingContext
 
         $config->setMetadataDriverImpl($mappingDriver);
         $this->entityManager = DoctrineEntityManager::create(
-                [
-                    'driver' => 'pdo_sqlite',
-                    'path'   => ':memory:'
-                ],
-                $config
+            [
+                'driver' => 'pdo_sqlite',
+                'path'   => ':memory:',
+            ],
+            $config
         );
         $this->proxyDriverFactory->factory($this->entityManager, $this->configuration);
         return $this->entityManager;
     }
-
 }

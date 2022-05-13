@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,65 +27,50 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic;
 
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use Fabiang\DoctrineDynamic\Mapper\Mapper;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use Fabiang\DoctrineDynamic\Mapper\MapperInterface;
 
 class ProxyDriver implements MappingDriver
 {
-    /**
-     * @var MappingDriver
-     */
-    private $originalDriver;
+    private MappingDriver $originalDriver;
+    private Configuration $configuration;
+    private MapperInterface $mapper;
 
-    /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
-     * @var MetadataMapper
-     */
-    private $mapper;
-
-    public function __construct(MappingDriver $originalDriver, Configuration $configuration, Mapper $mapper)
+    public function __construct(MappingDriver $originalDriver, Configuration $configuration, MapperInterface $mapper)
     {
         $this->originalDriver = $originalDriver;
         $this->configuration  = $configuration;
         $this->mapper         = $mapper;
     }
 
-    public function loadMetadataForClass($className, ClassMetadata $metadata)
+    public function loadMetadataForClass(string $className, ClassMetadata $metadata): void
     {
-        $return = $this->originalDriver->loadMetadataForClass($className, $metadata);
+        $this->originalDriver->loadMetadataForClass($className, $metadata);
 
         if ($this->configuration->has($className)) {
             $configuration = $this->configuration->get($className);
             $this->mapper->map($metadata, $configuration);
         }
-
-        return $return;
     }
 
-    public function getAllClassNames()
+    public function getAllClassNames(): array
     {
         return $this->originalDriver->getAllClassNames();
     }
 
-    public function isTransient($className)
+    public function isTransient(string $className): bool
     {
         return $this->originalDriver->isTransient($className);
     }
 
-    public function getOriginalDriver()
+    public function getOriginalDriver(): MappingDriver
     {
         return $this->originalDriver;
     }

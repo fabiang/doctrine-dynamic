@@ -1,12 +1,43 @@
 <?php
 
+/**
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the copyright holders.
+ */
+
+declare(strict_types=1);
+
 namespace Fabiang\DoctrineDynamic\Mapper;
 
-use PHPUnit\Framework\TestCase;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Fabiang\DoctrineDynamic\ConfigurationFactory;
 use Fabiang\DoctrineDynamic\Behat\NamespaceOne\Entity\TestEntity as TestEntityOne;
 use Fabiang\DoctrineDynamic\Behat\NamespaceTwo\Entity\TestEntity as TestEntityTwo;
+use Fabiang\DoctrineDynamic\ConfigurationFactory;
+use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
@@ -16,13 +47,9 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 final class MetadataMapperTest extends TestCase
 {
-
     use ProphecyTrait;
 
-    /**
-     * @var MetadataMapper
-     */
-    private $object;
+    private MetadataMapper $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -30,7 +57,7 @@ final class MetadataMapperTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->object = new MetadataMapper;
+        $this->object = new MetadataMapper();
     }
 
     /**
@@ -48,7 +75,7 @@ final class MetadataMapperTest extends TestCase
      * @covers Fabiang\DoctrineDynamic\Configuration\Mapping\OneToMany
      * @covers Fabiang\DoctrineDynamic\Configuration\Mapping\OneToOne
      */
-    public function testMap($config)
+    public function testMap(array $config): void
     {
         $metadata = $this->prophesize(ClassMetadataInfo::class);
         $metadata->mapOneToOne([
@@ -60,8 +87,8 @@ final class MetadataMapperTest extends TestCase
                 [
                     'name'                 => 'test_id',
                     'referencedColumnName' => 'id',
-                ]
-            ]
+                ],
+            ],
         ])->shouldBeCalled();
 
         $metadata->mapManyToOne([
@@ -72,8 +99,8 @@ final class MetadataMapperTest extends TestCase
                 [
                     'name'                 => 'test2_id',
                     'referencedColumnName' => 'id',
-                ]
-            ]
+                ],
+            ],
         ])->shouldBeCalled();
 
         $metadata->mapOneToMany([
@@ -89,7 +116,7 @@ final class MetadataMapperTest extends TestCase
             'mappedBy'     => null,
             'joinTable'    => [
                 'name' => 'ManyToManyTableName',
-            ]
+            ],
         ])->shouldBeCalled();
 
         $configurationFactory = new ConfigurationFactory();
@@ -107,7 +134,7 @@ final class MetadataMapperTest extends TestCase
         );
     }
 
-    public function provideConfig()
+    public function provideConfig(): array
     {
         return [
             [
@@ -124,10 +151,10 @@ final class MetadataMapperTest extends TestCase
                                         'inversedBy'   => 'test',
                                         'joinColumns'  => [
                                             'name'                 => 'test_id',
-                                            'referencedColumnName' => 'id'
-                                        ]
-                                    ]
-                                ]
+                                            'referencedColumnName' => 'id',
+                                        ],
+                                    ],
+                                ],
                             ],
                             'manyToOneField'  => [
                                 'manyToOne' => [
@@ -136,18 +163,18 @@ final class MetadataMapperTest extends TestCase
                                         'inversedBy'   => 'test2',
                                         'joinColumns'  => [
                                             'name'                 => 'test2_id',
-                                            'referencedColumnName' => 'id'
-                                        ]
-                                    ]
-                                ]
+                                            'referencedColumnName' => 'id',
+                                        ],
+                                    ],
+                                ],
                             ],
                             'oneToManyField'  => [
                                 'oneToMany' => [
                                     [
                                         'targetEntity' => TestEntityTwo::class,
                                         'mappedBy'     => 'test3',
-                                    ]
-                                ]
+                                    ],
+                                ],
                             ],
                             'manyToManyField' => [
                                 'manyToMany' => [
@@ -156,15 +183,14 @@ final class MetadataMapperTest extends TestCase
                                         'inversedBy'   => 'test4',
                                         'joinTable'    => [
                                             'name' => 'ManyToManyTableName',
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
-
 }

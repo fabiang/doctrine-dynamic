@@ -23,17 +23,40 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^7.4 || ~8.0.0 || ~8.1.0",
         "doctrine/common": "^3.0",
         "doctrine/orm": "^2.5",
+        "doctrine/persistence": "^3.0",
         "laminas/laminas-hydrator": "^3.0 || ^4.0",
         "laminas/laminas-stdlib": "^3.0"
     },
     "require-dev": {
         "behat/behat": "^3.8",
-        "dms/phpunit-arraysubset-asserts": "^0.2.1",
+        "dms/phpunit-arraysubset-asserts": "^0.4.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/php-invoker": "^3.1",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "symfony/cache": "^5.4 || ^6.0",
+        "doctrine/annotations": "^1.13",
+        "laminas/laminas-coding-standard": "^2.3",
+        "vimeo/psalm": "^4.23"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "scripts": {
+        "phpcs": "phpcs",
+        "psalm": "psalm --no-cache",
+        "phpunit": "phpunit",
+        "behat": "behat",
+        "test": [
+            "@phpcs",
+            "@psalm",
+            "@phpunit",
+            "@behat"
+        ]
     }
 }

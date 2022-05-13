@@ -1,26 +1,35 @@
 imports:
     - php
 
+build:
+    environment:
+        php: 8.0.0
+    nodes:
+        analysis:
+            project_setup:
+                override:
+                    - 'true'
+            tests:
+                override:
+                    - php-scrutinizer-run
+                    -
+                        command: phpcs-run
+
 filter:
-    paths:
-        - src/*
+    excluded_paths:
+        - 'tests/*'
+        - 'bin/*'
 
 checks:
     php: true
 
+coding_style:
+    php:
+        spaces:
+            around_operators:
+                concatenation: true
+
 tools:
-    php_code_sniffer:
-        config:
-            standard: PSR2
-    php_sim: true
-    php_cpd: false
-    php_loc: true
-    php_hhvm: true
-    php_mess_detector: true
-    php_pdepend: true
-    php_analyzer: false
-    sensiolabs_security_checker: true
-    php_changetracking: true
+    php_cs_fixer: false
     external_code_coverage:
-        runs: 1
-        timeout: 600
+        timeout: 300

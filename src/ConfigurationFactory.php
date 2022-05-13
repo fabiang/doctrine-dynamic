@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015 Fabian Grutschus. All rights reserved.
+ * Copyright 2015-2022 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -27,39 +27,35 @@
  * The views and conclusions contained in the software and documentation are those
  * of the authors and should not be interpreted as representing official policies,
  * either expressed or implied, of the copyright holders.
- *
- * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2015 Fabian Grutschus. All rights reserved.
- * @license   BSD-2-Clause
  */
+
+declare(strict_types=1);
 
 namespace Fabiang\DoctrineDynamic;
 
-use Laminas\Stdlib\ArrayUtils;
-use Fabiang\DoctrineDynamic\Exception\UnexpectedValueException;
+use Fabiang\DoctrineDynamic\Configuration\Mapping\JoinColumn;
+use Fabiang\DoctrineDynamic\Configuration\Mapping\OneToOne;
 use Fabiang\DoctrineDynamic\Exception\RuntimeException;
+use Fabiang\DoctrineDynamic\Exception\UnexpectedValueException;
+use Laminas\Stdlib\ArrayUtils;
+
+use function sprintf;
+use function ucfirst;
 
 class ConfigurationFactory
 {
-    /**
-     * @var array
-     */
-    private $mappings = [
-        'oneToOne'   => Configuration\Mapping\OneToOne::class,
+    private array $mappings = [
+        'oneToOne'   => OneToOne::class,
         'manyToOne'  => Configuration\Mapping\ManyToOne::class,
         'oneToMany'  => Configuration\Mapping\OneToMany::class,
         'manyToMany' => Configuration\Mapping\ManyToMany::class,
     ];
 
-    /**
-     * @param array|\Traversable $configuration
-     * @return Configuration
-     */
-    public function factory($configuration)
+    public function factory(iterable $configuration): Configuration
     {
         $configurationArray = ArrayUtils::iteratorToArray($configuration, true);
 
-        $configurationObject = new Configuration;
+        $configurationObject = new Configuration();
         foreach ($configurationArray as $entityName => $entityConfig) {
             $entity = new Configuration\Entity($entityName);
 
@@ -75,11 +71,7 @@ class ConfigurationFactory
         return $configurationObject;
     }
 
-    /**
-     * @param \Fabiang\DoctrineDynamic\Configuration\Entity $entity
-     * @param array $entityConfig
-     */
-    private function configureFields(Configuration\Entity $entity, array $entityConfig)
+    private function configureFields(Configuration\Entity $entity, array $entityConfig): void
     {
         foreach ($entityConfig as $fieldName => $fieldConfig) {
             $field = new Configuration\Field($fieldName);
@@ -92,7 +84,7 @@ class ConfigurationFactory
         }
     }
 
-    private function configureOptions(Configuration\Entity $entity, array $options)
+    private function configureOptions(Configuration\Entity $entity, array $options): void
     {
         foreach ($options as $option => $value) {
             $setter = 'set' . ucfirst($option);
@@ -101,16 +93,13 @@ class ConfigurationFactory
     }
 
     /**
-     * @param \Fabiang\DoctrineDynamic\Configuration\Field $field
-     * @param array $fieldConfig
-     * @param string $entityName
      * @throws UnexpectedValueException
      */
-    private function configureMappings(Configuration\Field $field, array $fieldConfig, $entityName)
+    private function configureMappings(Configuration\Field $field, array $fieldConfig, string $entityName): void
     {
         foreach ($this->mappings as $mappingType => $mappingClassName) {
             if (isset($fieldConfig[$mappingType])) {
-                if (!ArrayUtils::isList($fieldConfig[$mappingType])) {
+                if (! ArrayUtils::isList($fieldConfig[$mappingType])) {
                     throw new UnexpectedValueException(sprintf(
                         'Mapping definition for field "%s" at entity "%s" of mapping type "%s" must be an list',
                         $field->getName(),
@@ -130,13 +119,9 @@ class ConfigurationFactory
         }
     }
 
-    /**
-     * @param array $mappingConfig
-     * @return \Fabiang\DoctrineDynamic\Configuration\Mapping\OneToOne
-     */
-    private function configureOneToOne(array $mappingConfig)
+    private function configureOneToOne(array $mappingConfig): OneToOne
     {
-        $oneToOne = new Configuration\Mapping\OneToOne;
+        $oneToOne = new OneToOne();
         $oneToOne->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
         $oneToOne->setInversedBy($this->getOption($mappingConfig, 'inversedBy'));
         $oneToOne->setMappedBy($this->getOption($mappingConfig, 'mappedBy'));
@@ -148,9 +133,9 @@ class ConfigurationFactory
         return $oneToOne;
     }
 
-    private function configureManyToOne(array $mappingConfig)
+    private function configureManyToOne(array $mappingConfig): Configuration\Mapping\ManyToOne
     {
-        $manyToOne = new Configuration\Mapping\ManyToOne;
+        $manyToOne = new Configuration\Mapping\ManyToOne();
         $manyToOne->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
         $manyToOne->setInversedBy($this->getOption($mappingConfig, 'inversedBy'));
 
@@ -161,17 +146,17 @@ class ConfigurationFactory
         return $manyToOne;
     }
 
-    private function configureOneToMany(array $mappingConfig)
+    private function configureOneToMany(array $mappingConfig): Configuration\Mapping\OneToMany
     {
-        $oneToMany = new Configuration\Mapping\OneToMany;
+        $oneToMany = new Configuration\Mapping\OneToMany();
         $oneToMany->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
         $oneToMany->setMappedBy($this->getOption($mappingConfig, 'mappedBy'));
         return $oneToMany;
     }
 
-    private function configureManyToMany(array $mappingConfig)
+    private function configureManyToMany(array $mappingConfig): Configuration\Mapping\ManyToMany
     {
-        $manyToMany = new Configuration\Mapping\ManyToMany;
+        $manyToMany = new Configuration\Mapping\ManyToMany();
         $manyToMany->setTargetEntity($this->getOption($mappingConfig, 'targetEntity', true));
         $manyToMany->setInversedBy($this->getOption($mappingConfig, 'inversedBy'));
         $manyToMany->setMappedBy($this->getOption($mappingConfig, 'mappedBy'));
@@ -183,37 +168,27 @@ class ConfigurationFactory
         return $manyToMany;
     }
 
-    /**
-     * @param array $joinColumnConfig
-     * @return \Fabiang\DoctrineDynamic\Configuration\Mapping\JoinColumn
-     */
-    private function configureJoinColumn(array $joinColumnConfig)
+    private function configureJoinColumn(array $joinColumnConfig): JoinColumn
     {
         $name                 = $this->getOption($joinColumnConfig, 'name', true);
         $referencedColumnName = $this->getOption($joinColumnConfig, 'referencedColumnName', true);
 
-        $joinColumn = new Configuration\Mapping\JoinColumn($name, $referencedColumnName);
-        return $joinColumn;
+        return new JoinColumn($name, $referencedColumnName);
     }
 
-    private function configureJoinTable(array $joinTableConfig)
+    private function configureJoinTable(array $joinTableConfig): Configuration\Mapping\JoinTable
     {
         $name = $this->getOption($joinTableConfig, 'name', true);
-
-        $joinTable = new Configuration\Mapping\JoinTable($name);
-        return $joinTable;
+        return new Configuration\Mapping\JoinTable($name);
     }
 
     /**
-     * @param array $config
-     * @param string $option
-     * @param boolean $required
-     * @return array
+     * @return mixed
      * @throws RuntimeException
      */
-    private function getOption(array $config, $option, $required = false)
+    private function getOption(array $config, string $option, bool $required = false)
     {
-        if (!isset($config[$option])) {
+        if (! isset($config[$option])) {
             if ($required) {
                 throw new RuntimeException(sprintf(
                     'Configuration for field "%s" is required',

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Fabiang\DoctrineDynamic\Exception;
 
-interface ExceptionInterface
-{
+use Throwable;
 
+interface ExceptionInterface extends Throwable
+{
 }

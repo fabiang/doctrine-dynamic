@@ -134,7 +134,7 @@ final class MetadataMapperTest extends TestCase
         );
     }
 
-    public function provideConfig(): array
+    public static function provideConfig(): array
     {
         return [
             [

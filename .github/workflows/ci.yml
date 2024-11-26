@@ -1,0 +1,126 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  static:
+    name: Psalm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Psalm
+        uses: docker://vimeo/psalm-github-actions
+        with:
+          security_analysis: true
+          report_file: results.sarif
+          composer_ignore_platform_reqs: true
+
+      - name: Upload Security Analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+
+      # we may use whatever way to install phpcs, just specify the path on the next step
+      # however, curl seems to be the fastest
+      - name: Install PHP_CodeSniffer
+        run: |
+          curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+          php phpcs.phar --version
+
+      - uses: tinovyatkin/action-php-codesniffer@v1
+        with:
+          files: "**.php" # you may customize glob as needed
+          phpcs_path: php phpcs.phar
+          standard: phpcs.xml
+
+  unittest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php:
+        - version: 7.4
+          coverage: false
+        - version: 8.0
+          coverage: false
+        - version: 8.1
+          coverage: false
+        - version: 8.2
+          coverage: false
+        - version: 8.3
+          coverage: true
+        - version: 8.4
+          coverage: false
+        prefer-lowest: ['', '--prefer-lowest']
+
+    name: Unit Tests - PHP ${{ matrix.php.version }} ${{ matrix.prefer-lowest }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php.version }}
+        extensions: mbstring
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Update dependencies
+      run: composer update --prefer-dist --no-progress --with-all-dependencies ${{ matrix.prefer-lowest }}
+
+    - name: Run test suite
+      if: ${{ ! matrix.php.coverage }}
+      run: ./vendor/bin/phpunit
+
+    - name: Run test suite with code coverage
+      if: ${{ matrix.php.coverage }}
+      run: ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
+      env:
+        XDEBUG_MODE: coverage
+
+    - name: Upload code coverage to Scrutinizer
+      if: ${{ matrix.php.coverage }}
+      run: |
+        wget -q https://scrutinizer-ci.com/ocular.phar
+        php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml || true
+
+  integrationtest:
+    runs-on: ubuntu-latest
+
+    name: Behat
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.4
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: ./vendor/bin/behat

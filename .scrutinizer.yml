@@ -1,35 +1,34 @@
 imports:
-    - php
+  - php
 
 build:
-    environment:
-        php: 8.0.0
-    nodes:
-        analysis:
-            project_setup:
-                override:
-                    - 'true'
-            tests:
-                override:
-                    - php-scrutinizer-run
-                    -
-                        command: phpcs-run
+  environment:
+    php: 8.0.0
+  nodes:
+    analysis:
+      project_setup:
+        override:
+          - "true"
+      tests:
+        override:
+          - php-scrutinizer-run
+          - command: phpcs-run
 
 filter:
-    excluded_paths:
-        - 'tests/*'
-        - 'bin/*'
+  excluded_paths:
+    - "tests/*"
+    - "bin/*"
 
 checks:
-    php: true
+  php: true
 
 coding_style:
-    php:
-        spaces:
-            around_operators:
-                concatenation: true
+  php:
+    spaces:
+      around_operators:
+        concatenation: true
 
 tools:
-    php_cs_fixer: false
-    external_code_coverage:
-        timeout: 300
+  php_cs_fixer: false
+  external_code_coverage:
+    timeout: 300
